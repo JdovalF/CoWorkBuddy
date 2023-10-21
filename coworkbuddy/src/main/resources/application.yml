@@ -1,0 +1,37 @@
+# Logging Level
+logging:
+  level:
+    root: info
+    org.springframework: info
+    com.tophelp.coworkbuddy: debug
+
+# Actuator Security
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+
+# Datasource Configuration
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=coworkbudy
+    username: postgres
+    password: mysecretpassword
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  # Flyway Configuration
+  flyway:
+    url: jdbc:postgresql://localhost:5432/postgres
+    user: postgres
+    password: mysecretpassword
+    locations: classpath:db/migration
+    create-schemas: true
+    default-schema: coworkbuddy
+
+# Server Port Configuration
+server:
+  port: 80
