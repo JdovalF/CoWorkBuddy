@@ -1,4 +1,4 @@
-package com.tophelp.coworkbuddy.ui.dto;
+package com.tophelp.coworkbuddy.infrastructure.dto.output;
 
 import lombok.Getter;
 import lombok.Setter;
