@@ -15,9 +15,12 @@ management:
 # Datasource Configuration
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=coworkbudy
+    url: jdbc:postgresql://localhost:5432/postgres?currentSchema=coworkbuddy
     username: postgres
     password: mysecretpassword
+#    url: jdbc:postgresql://<uri>/<database>?currentSchema=<schema-name>
+#    username: <user-name>
+#    password: <password>
   jpa:
     properties:
       hibernate:
@@ -25,9 +28,10 @@ spring:
 
   # Flyway Configuration
   flyway:
+#    url: jdbc:postgresql://<uri>/<database>
     url: jdbc:postgresql://localhost:5432/postgres
-    user: postgres
-    password: mysecretpassword
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
     locations: classpath:db/migration
     create-schemas: true
     default-schema: coworkbuddy

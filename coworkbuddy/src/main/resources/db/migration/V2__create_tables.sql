@@ -1,38 +1,48 @@
 
-CREATE TABLE "user" (
+CREATE TABLE "users" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255),
+    username VARCHAR(255) NOT NULL,
     email VARCHAR(255),
-    password VARCHAR(255)
+    password VARCHAR(255) NOT NULL
 );
-
-CREATE TABLE "room" (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255)
+CREATE TABLE roles (
+      id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+      name VARCHAR(255) NOT NULL
 );
-
-CREATE TABLE "user_room" (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255),
-    room_id UUID REFERENCES "room"(id),
-    user_id UUID REFERENCES "user"(id)
+INSERT INTO roles (name) VALUES ('ADMIN');
+INSERT INTO roles (name) VALUES ('USER');
+CREATE TABLE users_roles (
+               id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+               user_id UUID REFERENCES "users"(id),
+               role_id UUID REFERENCES "roles"(id)
 );
-
-CREATE TABLE "worker" (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255)
-);
-
-CREATE TABLE "task" (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255)
-);
-
-CREATE TABLE "pair" (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(255),
-    url TEXT,
-    task_id UUID REFERENCES "task"(id),
-    worker_id UUID REFERENCES "worker"(id),
-    last_pairing_date TIMESTAMP
-);
+-- CREATE TABLE "rooms" (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(255)
+-- );
+--
+-- CREATE TABLE "users_rooms" (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(255),
+--     room_id UUID REFERENCES "rooms"(id),
+--     user_id UUID REFERENCES "users"(id)
+-- );
+--
+-- CREATE TABLE "workers" (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(255)
+-- );
+--
+-- CREATE TABLE "tasks" (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(255)
+-- );
+--
+-- CREATE TABLE "pairs" (
+--     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+--     name VARCHAR(255),
+--     url TEXT,
+--     task_id UUID REFERENCES "tasks"(id),
+--     worker_id UUID REFERENCES "workers"(id),
+--     last_pairing_date TIMESTAMP
+-- );
