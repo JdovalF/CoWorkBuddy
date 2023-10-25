@@ -9,6 +9,7 @@ import com.tophelp.coworkbuddy.infrastructure.mappers.UserMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoleRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.UserRepository;
 import com.tophelp.coworkbuddy.shared.exceptions.CoworkBuddyTechnicalException;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,15 +38,15 @@ public class UserService {
     }
 
     public UserDto retrieveUserById(String id) {
+        throwExceptionWhenNull(id, "Id", true);
         return userMapper.userToUserDTO(userRepository.findById(UUID.fromString(id))
-                .orElseThrow(() -> new DatabaseNotFoundException(String.format("id: %s not found in Database", id))));
+                .orElseThrow(() -> new DatabaseNotFoundException(String.format("Id: %s not found in Database", id))));
     }
 
     public UserDto createUser(UserInputDto userInputDto) {
-        if(isNull(userInputDto.getPassword())) {
-            throw new CoworkBuddyTechnicalException("Password is required");
-        }
-        User newUser = userMapper.userInputDtoToUser(userInputDto);
+        throwExceptionWhenNull(userInputDto.getId(), "Id", false);
+        throwExceptionWhenNull(userInputDto.getPassword(), "Password", true);
+        var newUser = userMapper.userInputDtoToUser(userInputDto);
         newUser.setRoles(isNull(userInputDto.getRoles()) || userInputDto.getRoles().isEmpty()
                 ? Set.of(roleRepository.findRoleByName("USER").orElseThrow(() -> new DatabaseNotFoundException(
                         String.format("Role: %s not found in Database", "USER"))))
@@ -54,4 +55,18 @@ public class UserService {
         newUser.setId(UUID.randomUUID());
         return userMapper.userToUserDTO(userRepository.save(newUser));
     }
+
+//    public UserDto updateUser(UserInputDto userInputDto) {
+//        throwExceptionWhenNull(userInputDto.getId(), "Id", true);
+//
+//    }
+
+    private void throwExceptionWhenNull(String parameter, String parameterName, boolean needsToBeNotNull) {
+        if(isNull(parameter) == needsToBeNotNull) {
+            throw new CoworkBuddyTechnicalException(String.format("%s %s required", parameterName,
+                    needsToBeNotNull ? "is" : "is not"));
+        }
+    }
+
+
 }
