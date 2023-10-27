@@ -4,7 +4,6 @@ import com.tophelp.coworkbuddy.shared.security.JwtTokenRequest;
 import com.tophelp.coworkbuddy.shared.security.JwtTokenResponse;
 import com.tophelp.coworkbuddy.shared.security.JwtTokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequestMapping("/auth/v1")
 @RequiredArgsConstructor

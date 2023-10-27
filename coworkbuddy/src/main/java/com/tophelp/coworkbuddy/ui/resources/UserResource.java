@@ -3,15 +3,10 @@ package com.tophelp.coworkbuddy.ui.resources;
 import com.tophelp.coworkbuddy.application.services.UserService;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.UserDto;
-import com.tophelp.coworkbuddy.shared.security.JwtTokenRequest;
-import com.tophelp.coworkbuddy.shared.security.JwtTokenResponse;
-import com.tophelp.coworkbuddy.shared.security.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,17 +30,20 @@ public class UserResource {
     @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<List<UserDto>> retrieveAllUsers() {
+        log.info("UserResource - retrieveAllUsers");
         return ResponseEntity.ok(userService.retrieveAllUsers());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> retrieveUserById(@PathVariable String id) {
+        log.info("UserResource - retrieveUserById - id: {}", id);
         return ResponseEntity.ok(userService.retrieveUserById(id));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto userInputDto) {
+        log.info("UserResource - createUser");
         UserDto savedUser = userService.createUser(userInputDto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -54,11 +52,11 @@ public class UserResource {
         return ResponseEntity.created(location).body(savedUser);
     }
 
-//    @PatchMapping
-//    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-//    public ResponseEntity<UserDto> updateUser(@RequestBody UserInputDto userInputDto) {
-//        UserDto savedUser = userService.updateUser(userInputDto);
-//        return ResponseEntity.ok(savedUser);
-//    }
+    @PatchMapping
+    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserInputDto userInputDto) {
+        log.info("UserResource - updateUser - id: {}", userInputDto.getId());
+        return ResponseEntity.ok(userService.updateUser(userInputDto));
+    }
 
 }

@@ -1,7 +1,10 @@
 package com.tophelp.coworkbuddy.application.services;
 
+import com.tophelp.coworkbuddy.domain.Role;
 import com.tophelp.coworkbuddy.domain.User;
+import com.tophelp.coworkbuddy.infrastructure.dto.input.RoleInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
+import com.tophelp.coworkbuddy.infrastructure.dto.output.RoleDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.RoleMapper;
 import com.tophelp.coworkbuddy.infrastructure.mappers.UserMapper;
@@ -11,6 +14,8 @@ import com.tophelp.coworkbuddy.shared.exceptions.CoworkBuddyTechnicalException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -19,12 +24,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
 import static java.util.Collections.emptyList;
 import static org.apache.commons.lang3.builder.EqualsBuilder.reflectionEquals;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,18 +49,17 @@ class UserServiceTest {
     @Mock
     private RoleRepository roleRepository;
 
+    @Captor
+    private ArgumentCaptor<User> userArgumentCaptor;
 
     @InjectMocks
     private UserService userService;
 
     @Test
     void shouldRetrieveAllUsers_whenRetrieveAllUsersCalled() {
-        //Given
         var expectedUsers = List.of(buildMinimalUser(UUID.randomUUID()), buildMinimalUser(UUID.randomUUID()));
-        //When
         when(userRepository.findAll()).thenReturn(expectedUsers);
         var actualUserDtos = userService.retrieveAllUsers();
-        //Then
         IntStream.rangeClosed(0, expectedUsers.size() - 1)
                 .forEach(index -> {
                     assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedUsers.get(index)), actualUserDtos.get(index)));
@@ -62,33 +68,24 @@ class UserServiceTest {
 
     @Test
     void shouldReturnEmptyList_whenRetrieveAllUsersCalled() {
-        //Given
-        //When
         when(userRepository.findAll()).thenReturn(emptyList());
         var actualUserDtos = userService.retrieveAllUsers();
-        //Then
         assertTrue(actualUserDtos.isEmpty());
     }
 
     @Test
     void shouldReturnUserDto_whenRetrieveUserByIdCalled_withId() {
-        //Given
         var givenId = String.valueOf(UUID.randomUUID());
         var expectedUser = buildMinimalUser(UUID.fromString(givenId));
-        //When
         when(userRepository.findById(UUID.fromString(givenId))).thenReturn(Optional.of(expectedUser));
         var actualUserDto = userService.retrieveUserById(givenId);
-        //Then
         assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedUser), actualUserDto));
     }
 
     @Test
     void shouldThrowCoworkBuddyTechnicalException_whenRetrieveUserByIdCalled_withNullId() {
-        //Given
         String givenId = null;
         var expectedException = new CoworkBuddyTechnicalException("Id is required");
-        //When
-        //Then
         assertEquals(expectedException.getMessage(),
                 assertThrows(CoworkBuddyTechnicalException.class,
                         () -> userService.retrieveUserById(givenId)).getMessage());
@@ -96,43 +93,144 @@ class UserServiceTest {
 
     @Test
     void shouldThrowDataBaseNotFoundException_whenRetrieveUserByIdCalled_byId() {
-        //Given
         var givenId = String.valueOf(UUID.randomUUID());
         var expectedException = new DatabaseNotFoundException(String.format("Id: %s not found in Database", givenId));
-        //When
         when(userRepository.findById(UUID.fromString(givenId))).thenReturn(Optional.empty());
-        //Then
         assertEquals(expectedException.getMessage(),
                 assertThrows(DatabaseNotFoundException.class,
                         () -> userService.retrieveUserById(givenId)).getMessage());
     }
 
-
-    //shouldReturnUserDto_whenCalled_withValidUserInputDto
-    //shouldThrowCoworkBuddyTechnicalException_whenCalled_withInValidUserInputDto_not_null_id
-
     @Test
     void shouldThrowCoworkBuddyTechnicalException_whenCreateUserCalled_withInValidUserInputDto_withNotNullId() {
-        //Given
         var givenUserInputDto = buildMinimalUserInputDto(String.valueOf(UUID.randomUUID()));
         var expectedException = new CoworkBuddyTechnicalException("Id is not required");
-        //When
-        //Then
         assertEquals(expectedException.getMessage(),
                 assertThrows(CoworkBuddyTechnicalException.class,
                         () -> userService.createUser(givenUserInputDto)).getMessage());
     }
-    //shouldThrowCoworkBuddyTechnicalException_whenCalled_withInValidUserInputDto_null_password
+
     @Test
     void shouldThrowCoworkBuddyTechnicalException_whenCreateUserCalled_withInValidUserInputDto_null_password() {
-        //Given
         var givenUserInputDto = buildMinimalUserInputDto(null);
         var expectedException = new CoworkBuddyTechnicalException("Password is required");
-        //When
-        //Then
         assertEquals(expectedException.getMessage(),
                 assertThrows(CoworkBuddyTechnicalException.class,
                         () -> userService.createUser(givenUserInputDto)).getMessage());
+    }
+
+    @Test
+    void shouldReturnUserDto_whenCreateUserCalled_withValidUserInputDto_withoutRoles() {
+        var password = "test-password";
+        var role = buildMinimalRole();
+        var givenUserInputDto = buildMinimalUserInputDto(null);
+        givenUserInputDto.setPassword(password);
+        var expectedSavedUser = buildMinimalUser(UUID.randomUUID());
+        expectedSavedUser.setPassword(password);
+        when(roleRepository.findRoleByName("USER")).thenReturn(Optional.of(role));
+        when(userRepository.save(any(User.class))).thenReturn(expectedSavedUser);
+        var actualUserDto = userService.createUser(givenUserInputDto);
+        assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedSavedUser), actualUserDto));
+    }
+
+    @Test
+    void shouldReturnUserDto_whenCreateUserCalled_withValidUserInputDto_withRoles() {
+        var password = "test-password";
+        var role = buildMinimalRoleInputDto();
+        var givenUserInputDto = buildMinimalUserInputDto(null);
+        givenUserInputDto.setPassword(password);
+        givenUserInputDto.setRoles(Set.of(role));
+        var expectedSavedUser = buildMinimalUser(UUID.randomUUID());
+        expectedSavedUser.setPassword(password);
+        when(userRepository.save(any(User.class))).thenReturn(expectedSavedUser);
+        var actualUserDto = userService.createUser(givenUserInputDto);
+        assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedSavedUser), actualUserDto));
+    }
+
+    @Test
+    void shouldThrowDatabaseNotFoundException_whenCreateUserCalled_withValidUserInputDto_withoutRoles_and_ROLE_USER_notFound() {
+        var password = "test-password";
+        var givenUserInputDto = buildMinimalUserInputDto(null);
+        givenUserInputDto.setPassword(password);
+        var expectedSavedUser = buildMinimalUser(UUID.randomUUID());
+        expectedSavedUser.setPassword(password);
+        var expectedException = new DatabaseNotFoundException("Role: USER not found in Database");
+        when(roleRepository.findRoleByName("USER")).thenReturn(Optional.empty());
+        var actualException = assertThrows(DatabaseNotFoundException.class,
+                () -> userService.createUser(givenUserInputDto));
+        assertEquals(expectedException.getMessage(), actualException.getMessage());
+    }
+
+    @Test
+    void shouldThrowCoworkBuddyTechnicalException_whenUpdateUserCalled_withInValidUserInputDto_NoId() {
+        var expectedMessage = "Id is required";
+        var givenUserInputDto = buildMinimalUserInputDto(null);
+        var actualException = assertThrows(CoworkBuddyTechnicalException.class,
+                () -> userService.updateUser(givenUserInputDto));
+        assertEquals(expectedMessage, actualException.getMessage());
+    }
+
+    @Test
+    void shouldThrowDatabaseNotFoundException_whenUpdateUserCalled_withInValidUserInputDto_IdNotFound() {
+        var uuid = String.valueOf(UUID.randomUUID());
+        var expectedMessage = String.format("Id: %s not found in Database", uuid);
+        var givenUserInputDto = buildMinimalUserInputDto(uuid);
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.empty());
+        var actualException = assertThrows(DatabaseNotFoundException.class,
+                () -> userService.updateUser(givenUserInputDto));
+        assertEquals(expectedMessage, actualException.getMessage());
+    }
+
+    @Test
+    void shouldReturnUpdateUser_whenCreateUserCalled_withValidUserInputDto_withoutRoles() {
+        var uuid = String.valueOf(UUID.randomUUID());
+        var givenUserInputDto = buildMinimalUserInputDto(uuid);
+        givenUserInputDto.setUsername("new-username");
+        var givenUser = buildMinimalUser(UUID.fromString(uuid));
+        givenUser.setUsername("old-username");
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(givenUser));
+        givenUser.setUsername("new-username");
+        when(userRepository.save(givenUser)).thenReturn(givenUser);
+        var actualUserDto = userService.updateUser(givenUserInputDto);
+        assertTrue(reflectionEquals(userMapper.userToUserDTO(givenUser), actualUserDto));
+    }
+
+    @Test
+    void shouldReturnUpdateUser_whenCreateUserCalled_withValidUserInputDto_withNewRoles() {
+        var uuid = String.valueOf(UUID.randomUUID());
+        var givenUserInputDto = buildMinimalUserInputDto(uuid);
+        givenUserInputDto.setUsername("new-username");
+        var adminId = UUID.randomUUID();
+        var adminInputdto = RoleInputDto.builder().id(String.valueOf(adminId)).name("ADMIN").build();
+        var inputDtoRoles = Set.of(adminInputdto);
+        givenUserInputDto.setRoles(inputDtoRoles);
+        var givenUser = buildMinimalUser(UUID.fromString(uuid));
+        givenUser.setUsername("old-username");
+        var user = Role.builder().id(UUID.randomUUID()).name("USER").build();
+        givenUser.setRoles(Set.of(user));
+        var admin = Role.builder().id(adminId).name("ADMIN").build();
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(givenUser));
+        when(roleRepository.findById(adminId)).thenReturn(Optional.of(admin));
+        givenUser.setUsername("new-username");
+        givenUser.setRoles(Set.of(admin));
+        when(userRepository.save(givenUser)).thenReturn(givenUser);
+        var actualUserDto = userService.updateUser(givenUserInputDto);
+        var actualAdminIdRole = actualUserDto.getRoles().stream().findFirst().map(RoleDto::getId);
+        var expectedAdminIdRole = userMapper.userToUserDTO(givenUser).getRoles().stream().findFirst().map(RoleDto::getId);
+       assertEquals(expectedAdminIdRole, actualAdminIdRole);
+    }
+
+    @Test
+    void shouldReturnUpdateUser_whenCreateUserCalled_withValidUserInputDto_withoutRoles_andNewPassword() {
+        var uuid = String.valueOf(UUID.randomUUID());
+        var givenUserInputDto = buildMinimalUserInputDto(uuid);
+        givenUserInputDto.setPassword("new-password");
+        var givenUser = buildMinimalUser(UUID.fromString(uuid));
+        givenUser.setPassword(passwordEncoder.encode("old-password"));
+        when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(givenUser));
+        when(userRepository.save(givenUser)).thenReturn(givenUser);
+        var actualUserDto = userService.updateUser(givenUserInputDto);
+        assertTrue(reflectionEquals(userMapper.userToUserDTO(givenUser), actualUserDto));
     }
 
     private User buildMinimalUser(UUID uuid) {
@@ -143,6 +241,14 @@ class UserServiceTest {
         return UserInputDto.builder()
                 .id(uuid)
                 .build();
+    }
+
+    private Role buildMinimalRole() {
+        return Role.builder().id(UUID.randomUUID()).name("USER").build();
+    }
+
+    private RoleInputDto buildMinimalRoleInputDto() {
+        return RoleInputDto.builder().id(String.valueOf(UUID.randomUUID())).name("USER").build();
     }
 }
 //Given
