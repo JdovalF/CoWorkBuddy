@@ -1,4 +1,4 @@
-package com.tophelp.coworkbuddy.ui.resources;
+package com.tophelp.coworkbuddy.ui.controller;
 
 import com.tophelp.coworkbuddy.shared.security.JwtTokenRequest;
 import com.tophelp.coworkbuddy.shared.security.JwtTokenResponse;

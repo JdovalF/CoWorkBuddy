@@ -1,4 +1,4 @@
-package com.tophelp.coworkbuddy.ui.resources;
+package com.tophelp.coworkbuddy.ui.controller;
 
 import com.tophelp.coworkbuddy.application.services.UserService;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;

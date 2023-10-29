@@ -1,14 +1,32 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.5'
-	id 'io.spring.dependency-management' version '1.1.3'
+buildscript {
+	ext {
+		springBootVersion = '3.1.5'
+		verifierVersion = '4.0.4'
+
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath "org.springframework.cloud:spring-cloud-contract-gradle-plugin:${verifierVersion}"
+	}
 }
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'spring-cloud-contract'
 
 group = 'com.tophelp'
 version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
+	targetCompatibility = '17'
 }
 
 configurations {
@@ -40,6 +58,25 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'org.springframework.cloud:spring-cloud-starter-contract-verifier'
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:2022.0.4"
+	}
+}
+
+contracts {
+	contractsDslDir = file("src/test/resources/contracts")
+	packageWithBaseClasses = 'com.tophelp.coworkbuddy.ui.controller'
+	baseClassMappings {
+		baseClassMapping(".*", "com.tophelp.coworkbuddy.ui.controller.ResourcesBaseClass")
+	}
+}
+
+contractTest {
+	useJUnitPlatform()
 }
 
 tasks.named('test') {

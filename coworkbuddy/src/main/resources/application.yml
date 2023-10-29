@@ -12,29 +12,32 @@ management:
       exposure:
         include: health,info,metrics
 
-# Datasource Configuration
 spring:
+# Datasource Configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=coworkbuddy
     username: postgres
     password: mysecretpassword
-#    url: jdbc:postgresql://<uri>/<database>?currentSchema=<schema-name>
-#    username: <user-name>
-#    password: <password>
+    # url: jdbc:postgresql://<uri>/<database>?currentSchema=<schema-name>
+    # username: <user-name>
+    # password: <password>
+# Jpa - Hibernate
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-  # Flyway Configuration
+# Flyway Configuration
   flyway:
-#    url: jdbc:postgresql://<uri>/<database>
+    # url: jdbc:postgresql://<uri>/<database>
     url: jdbc:postgresql://localhost:5432/postgres
     user: ${spring.datasource.username}
     password: ${spring.datasource.password}
     locations: classpath:db/migration
     create-schemas: true
     default-schema: coworkbuddy
+
+# Cloud
 
 # Server Port Configuration
 server:

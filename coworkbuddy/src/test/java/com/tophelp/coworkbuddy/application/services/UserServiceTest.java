@@ -14,8 +14,6 @@ import com.tophelp.coworkbuddy.shared.exceptions.CoworkBuddyTechnicalException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -48,9 +46,6 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private RoleRepository roleRepository;
-
-    @Captor
-    private ArgumentCaptor<User> userArgumentCaptor;
 
     @InjectMocks
     private UserService userService;
@@ -238,9 +233,7 @@ class UserServiceTest {
     }
 
     private UserInputDto buildMinimalUserInputDto(String uuid) {
-        return UserInputDto.builder()
-                .id(uuid)
-                .build();
+        return UserInputDto.builder().id(uuid).build();
     }
 
     private Role buildMinimalRole() {
@@ -251,6 +244,3 @@ class UserServiceTest {
         return RoleInputDto.builder().id(String.valueOf(UUID.randomUUID())).name("USER").build();
     }
 }
-//Given
-//When
-//Then
