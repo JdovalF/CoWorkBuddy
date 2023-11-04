@@ -33,7 +33,7 @@ public class RoomService implements IRoomService {
         log.info("RoomService - createRoom");
         CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", false);
         CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
-        var actualUser = retriveUserFromRoomInputDto(roomInputDto.getId());
+        var actualUser = retrieveUserFromRoomInputDto(roomInputDto.getUserId());
         var actualRoom = Room.builder().id(UUID.randomUUID()).name(roomInputDto.getName()).user(actualUser).build();
         return roomMapper.roomToRoomDto(roomRepository.save(actualRoom));
     }
@@ -47,7 +47,7 @@ public class RoomService implements IRoomService {
         oldRoom.setName(roomInputDto.getName());
         if(nonNull(roomInputDto.getUserId())
            && !CrudUtils.uuidFromString(roomInputDto.getUserId()).equals(oldRoom.getUser().getId())) {
-            oldRoom.setUser(retriveUserFromRoomInputDto(roomInputDto.getId()));
+            oldRoom.setUser(retrieveUserFromRoomInputDto(roomInputDto.getUserId()));
         }
         return roomMapper.roomToRoomDto(roomRepository.save(oldRoom));
     }
@@ -63,7 +63,7 @@ public class RoomService implements IRoomService {
                 () -> new DatabaseNotFoundException(format("Room Id: %s not found in Database", id)));
     }
 
-    private User retriveUserFromRoomInputDto(String id) {
+    private User retrieveUserFromRoomInputDto(String id) {
         return userRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
                 () -> new DatabaseNotFoundException(format("User Id: %s not found in Database", id)));
     }
