@@ -14,5 +14,6 @@ public class UserInputDto {
     private String username;
     private String email;
     private String password;
-    private Set<RoleInputDto> roles;
+    private Set<String> roles;
+    private Set<String> rooms;
 }

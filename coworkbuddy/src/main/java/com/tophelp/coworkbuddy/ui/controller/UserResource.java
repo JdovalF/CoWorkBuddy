@@ -1,7 +1,8 @@
 package com.tophelp.coworkbuddy.ui.controller;
 
-import com.tophelp.coworkbuddy.application.services.UserService;
+import com.tophelp.coworkbuddy.application.api.IUserService;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
+import com.tophelp.coworkbuddy.infrastructure.dto.output.RoomDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
 import java.util.List;
 
 @Slf4j
@@ -25,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserResource {
 
-    private final UserService userService;
+    private final IUserService userService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
@@ -44,8 +44,8 @@ public class UserResource {
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
     public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto userInputDto) {
         log.info("UserResource - createUser");
-        UserDto savedUser = userService.createUser(userInputDto);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+        var savedUser = userService.createUser(userInputDto);
+        var location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedUser.getId())
                 .toUri();
@@ -57,6 +57,12 @@ public class UserResource {
     public ResponseEntity<UserDto> updateUser(@RequestBody UserInputDto userInputDto) {
         log.info("UserResource - updateUser - id: {}", userInputDto.getId());
         return ResponseEntity.ok(userService.updateUser(userInputDto));
+    }
+
+    @GetMapping("/{id}/rooms")
+    public ResponseEntity<List<RoomDto>> retrieveRoomsByUserId(@PathVariable String id) {
+        log.info("UserResource - retrieveRoomsByUserId - id: {}", id);
+        return ResponseEntity.ok(userService.findAllRoomsByUserId(id));
     }
 
 }

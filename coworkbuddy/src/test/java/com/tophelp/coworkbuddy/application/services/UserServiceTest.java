@@ -1,14 +1,17 @@
 package com.tophelp.coworkbuddy.application.services;
 
 import com.tophelp.coworkbuddy.domain.Role;
+import com.tophelp.coworkbuddy.domain.Room;
 import com.tophelp.coworkbuddy.domain.User;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.RoleInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.RoleDto;
+import com.tophelp.coworkbuddy.infrastructure.dto.output.RoomDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.RoleMapper;
 import com.tophelp.coworkbuddy.infrastructure.mappers.UserMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoleRepository;
+import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.UserRepository;
 import com.tophelp.coworkbuddy.shared.exceptions.CoworkBuddyTechnicalException;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,8 @@ class UserServiceTest {
     private UserRepository userRepository;
     @Mock
     private RoleRepository roleRepository;
+    @Mock
+    private RoomRepository roomRepository;
 
     @InjectMocks
     private UserService userService;
@@ -131,12 +136,14 @@ class UserServiceTest {
     @Test
     void shouldReturnUserDto_whenCreateUserCalled_withValidUserInputDto_withRoles() {
         var password = "test-password";
-        var role = buildMinimalRoleInputDto();
+        Role role = buildMinimalRole();
+        UUID roleId = role.getId();
         var givenUserInputDto = buildMinimalUserInputDto(null);
         givenUserInputDto.setPassword(password);
-        givenUserInputDto.setRoles(Set.of(role));
+        givenUserInputDto.setRoles(Set.of(String.valueOf(roleId)));
         var expectedSavedUser = buildMinimalUser(UUID.randomUUID());
         expectedSavedUser.setPassword(password);
+        when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
         when(userRepository.save(any(User.class))).thenReturn(expectedSavedUser);
         var actualUserDto = userService.createUser(givenUserInputDto);
         assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedSavedUser), actualUserDto));
@@ -197,7 +204,7 @@ class UserServiceTest {
         givenUserInputDto.setUsername("new-username");
         var adminId = UUID.randomUUID();
         var adminInputdto = RoleInputDto.builder().id(String.valueOf(adminId)).name("ADMIN").build();
-        var inputDtoRoles = Set.of(adminInputdto);
+        var inputDtoRoles = Set.of(adminInputdto.getId());
         givenUserInputDto.setRoles(inputDtoRoles);
         var givenUser = buildMinimalUser(UUID.fromString(uuid));
         givenUser.setUsername("old-username");
@@ -216,16 +223,31 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldReturnUpdateUser_whenCreateUserCalled_withValidUserInputDto_withoutRoles_andNewPassword() {
+    void shouldReturnUpdateUser_whenCreateUserCalled_withValidUserInputDto_withoutRoles_withRooms_andNewPassword() {
         var uuid = String.valueOf(UUID.randomUUID());
         var givenUserInputDto = buildMinimalUserInputDto(uuid);
         givenUserInputDto.setPassword("new-password");
+        UUID roomId = UUID.randomUUID();
+        givenUserInputDto.setRooms(Set.of(String.valueOf(roomId)));
         var givenUser = buildMinimalUser(UUID.fromString(uuid));
         givenUser.setPassword(passwordEncoder.encode("old-password"));
         when(userRepository.findById(UUID.fromString(uuid))).thenReturn(Optional.of(givenUser));
         when(userRepository.save(givenUser)).thenReturn(givenUser);
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(buildMinimalRoom(roomId)));
         var actualUserDto = userService.updateUser(givenUserInputDto);
         assertTrue(reflectionEquals(userMapper.userToUserDTO(givenUser), actualUserDto));
+    }
+
+    @Test
+    void shouldReturnRoomDtos_whenFindAllRoomsByUserId() {
+        UUID userUuid = UUID.randomUUID();
+        UUID roomUuid = UUID.randomUUID();
+        var givenUser = buildMinimalUser(userUuid);
+        var expectedRooms = List.of(RoomDto.builder().id(roomUuid).name("DeathStar").build());
+        givenUser.setRooms(Set.of(buildMinimalRoom(roomUuid)));
+        when(userRepository.findById(userUuid)).thenReturn(Optional.of(givenUser));
+        var actualRooms  = userService.findAllRoomsByUserId(String.valueOf(userUuid));
+        assertIterableEquals(expectedRooms, actualRooms);
     }
 
     private User buildMinimalUser(UUID uuid) {
@@ -240,7 +262,7 @@ class UserServiceTest {
         return Role.builder().id(UUID.randomUUID()).name("USER").build();
     }
 
-    private RoleInputDto buildMinimalRoleInputDto() {
-        return RoleInputDto.builder().id(String.valueOf(UUID.randomUUID())).name("USER").build();
+    private Room buildMinimalRoom(UUID roomId) {
+        return Room.builder().id(roomId).name("DeathStar").build();
     }
 }

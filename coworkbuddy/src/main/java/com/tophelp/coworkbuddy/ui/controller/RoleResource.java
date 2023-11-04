@@ -1,6 +1,6 @@
 package com.tophelp.coworkbuddy.ui.controller;
 
-import com.tophelp.coworkbuddy.application.services.RoleService;
+import com.tophelp.coworkbuddy.application.api.IRoleService;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.RoleDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleResource {
 
-    private final RoleService roleService;
+    private final IRoleService roleService;
 
     @GetMapping
     @PreAuthorize("hasAuthority('SCOPE_ADMIN')")

@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @Builder
 @EqualsAndHashCode
-public class RoleInputDto {
+public class RoomInputDto {
     private String id;
     private String name;
+    private String userId;
 }

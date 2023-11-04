@@ -3,20 +3,22 @@ package com.tophelp.coworkbuddy.application.services;
 import com.tophelp.coworkbuddy.application.api.IUserService;
 import com.tophelp.coworkbuddy.application.utils.CrudUtils;
 import com.tophelp.coworkbuddy.domain.Role;
+import com.tophelp.coworkbuddy.domain.Room;
 import com.tophelp.coworkbuddy.domain.User;
-import com.tophelp.coworkbuddy.infrastructure.dto.input.RoleInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
+import com.tophelp.coworkbuddy.infrastructure.dto.output.RoomDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.UserDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
-import com.tophelp.coworkbuddy.infrastructure.mappers.RoleMapper;
 import com.tophelp.coworkbuddy.infrastructure.mappers.UserMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoleRepository;
+import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -33,8 +35,8 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final RoomRepository roomRepository;
     private final UserMapper userMapper;
-    private final RoleMapper roleMapper;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -60,7 +62,8 @@ public class UserService implements IUserService {
         newUser.setRoles(isNull(userInputDto.getRoles()) || userInputDto.getRoles().isEmpty()
                 ? Set.of(roleRepository.findRoleByName("USER").orElseThrow(() -> new DatabaseNotFoundException(
                         format("Role: %s not found in Database", "USER"))))
-                : userInputDto.getRoles().stream().map(roleMapper::roleInputDtoToRole).collect(Collectors.toSet()));
+                : userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet()));
+        newUser.setRooms(new HashSet<>());
         newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
         newUser.setId(UUID.randomUUID());
         return userMapper.userToUserDTO(userRepository.save(newUser));
@@ -78,11 +81,24 @@ public class UserService implements IUserService {
             actualUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
         }
         if(nonNull(userInputDto.getRoles()) && !userInputDto.getRoles().isEmpty()) {
-            Set<Role> roles = userInputDto.getRoles().stream().map(RoleInputDto::getId)
-                    .map(this::findRoleById).collect(Collectors.toSet());
+            Set<Role> roles = userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet());
             actualUser.setRoles(roles);
         }
+        if(nonNull(userInputDto.getRooms()) && !userInputDto.getRooms().isEmpty()) {
+            Set<Room> rooms = userInputDto.getRooms().stream().map(this::findRoomById).collect(Collectors.toSet());
+            actualUser.setRooms(rooms);
+        }
         return userMapper.userToUserDTO(userRepository.save(actualUser));
+    }
+
+    @Override
+    public List<RoomDto> findAllRoomsByUserId(String id) {
+        return this.retrieveUserById(id).getRooms().stream().toList();
+    }
+
+    private Room findRoomById(String id) {
+        return roomRepository.findById(CrudUtils.uuidFromString(id))
+                .orElseThrow(() -> new DatabaseNotFoundException(format("Room with id: %s not found in Database", id)));
     }
 
     private Role findRoleById(String id) {
