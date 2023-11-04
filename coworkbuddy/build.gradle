@@ -2,7 +2,6 @@ buildscript {
 	ext {
 		springBootVersion = '3.1.5'
 		verifierVersion = '4.0.4'
-
 	}
 	repositories {
 		mavenCentral()
@@ -13,10 +12,7 @@ buildscript {
 	}
 }
 
-apply plugin: 'groovy'
 apply plugin: 'java'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'spring-cloud-contract'
@@ -48,7 +44,6 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.mapstruct:mapstruct:1.5.0.Final'
 	implementation 'org.flywaydb:flyway-core'
-
 	runtimeOnly 'org.postgresql:postgresql'
 	compileOnly 'org.projectlombok:lombok'
 
@@ -73,10 +68,6 @@ contracts {
 	baseClassMappings {
 		baseClassMapping(".*", "com.tophelp.coworkbuddy.ui.controller.ResourcesBaseClass")
 	}
-}
-
-contractTest {
-	useJUnitPlatform()
 }
 
 tasks.named('test') {
