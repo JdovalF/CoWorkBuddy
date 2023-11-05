@@ -81,12 +81,10 @@ public class UserService implements IUserService {
       actualUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
     }
     if (nonNull(userInputDto.getRoles()) && !userInputDto.getRoles().isEmpty()) {
-      Set<Role> roles = userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet());
-      actualUser.setRoles(roles);
+      actualUser.setRoles(userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet()));
     }
     if (nonNull(userInputDto.getRooms()) && !userInputDto.getRooms().isEmpty()) {
-      Set<Room> rooms = userInputDto.getRooms().stream().map(this::findRoomById).collect(Collectors.toSet());
-      actualUser.setRooms(rooms);
+      actualUser.setRooms(userInputDto.getRooms().stream().map(this::findRoomById).collect(Collectors.toSet()));
     }
     return userMapper.userToUserDTO(userRepository.save(actualUser));
   }
