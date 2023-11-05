@@ -3,12 +3,14 @@ package com.tophelp.coworkbuddy.application.services;
 import com.tophelp.coworkbuddy.application.api.IWorkerService;
 import com.tophelp.coworkbuddy.application.utils.CrudUtils;
 import com.tophelp.coworkbuddy.domain.Room;
+import com.tophelp.coworkbuddy.domain.Task;
 import com.tophelp.coworkbuddy.domain.Worker;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.WorkerInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.WorkerDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.WorkerMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
+import com.tophelp.coworkbuddy.infrastructure.repository.TaskRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ public class WorkerService implements IWorkerService {
 
   private final WorkerRepository workerRepository;
   private final RoomRepository roomRepository;
+  private final TaskRepository taskRepository;
   private final WorkerMapper workerMapper;
 
   @Override
@@ -35,8 +38,9 @@ public class WorkerService implements IWorkerService {
     CrudUtils.throwExceptionWhenNull(workerInputDto.getName(), "Name", true);
     CrudUtils.throwExceptionWhenNull(workerInputDto.getRoomId(), "Room Id", true);
     return workerMapper.workerToWorkerDto(workerRepository.save(Worker.builder().id(UUID.randomUUID())
-            .name(workerInputDto.getName()).active(workerInputDto.isActive())
-            .room(retrieveRoomById(workerInputDto.getRoomId()))
+        .name(workerInputDto.getName()).active(workerInputDto.isActive())
+        .room(retrieveRoomById(workerInputDto.getRoomId()))
+        .task(nonNull(workerInputDto.getTaskId()) ? retrieveTaskById(workerInputDto.getTaskId()) : null)
         .build()));
   }
 
@@ -46,8 +50,11 @@ public class WorkerService implements IWorkerService {
     CrudUtils.throwExceptionWhenNull(workerInputDto.getId(), "Id", true);
     var oldWorker = retrieveWorkerById(workerInputDto.getId());
     workerMapper.updateWorkerFromWorkerInputDto(workerInputDto, oldWorker);
-    if (nonNull(workerInputDto.getRoomId()) && !workerInputDto.getRoomId().equals(oldWorker.getRoom().getId())) {
+    if (nonNull(workerInputDto.getRoomId())) {
       oldWorker.setRoom(retrieveRoomById(workerInputDto.getRoomId()));
+    }
+    if (nonNull(workerInputDto.getTaskId())) {
+      oldWorker.setTask(retrieveTaskById(workerInputDto.getTaskId()));
     }
     return workerMapper.workerToWorkerDto(workerRepository.save(oldWorker));
   }
@@ -56,6 +63,11 @@ public class WorkerService implements IWorkerService {
   public void deleteWorkerById(String id) {
     log.info("WorkerService - deleteWorkerById");
     workerRepository.delete(retrieveWorkerById(id));
+  }
+
+  private Task retrieveTaskById(String id) {
+    return taskRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
+        () -> new DatabaseNotFoundException(format("Task Id: %s not found in Database", id)));
   }
 
   private Room retrieveRoomById(String id) {

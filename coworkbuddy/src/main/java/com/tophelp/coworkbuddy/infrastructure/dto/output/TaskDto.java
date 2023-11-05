@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -15,4 +16,5 @@ public class TaskDto {
   private UUID id;
   private String name;
   private boolean active;
+  private Set<WorkerDto> workers;
 }

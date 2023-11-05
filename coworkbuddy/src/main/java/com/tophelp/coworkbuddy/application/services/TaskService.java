@@ -4,17 +4,20 @@ import com.tophelp.coworkbuddy.application.api.ITaskService;
 import com.tophelp.coworkbuddy.application.utils.CrudUtils;
 import com.tophelp.coworkbuddy.domain.Room;
 import com.tophelp.coworkbuddy.domain.Task;
+import com.tophelp.coworkbuddy.domain.Worker;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.TaskInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.TaskDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.TaskMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.TaskRepository;
+import com.tophelp.coworkbuddy.infrastructure.repository.WorkerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -26,6 +29,7 @@ public class TaskService implements ITaskService {
 
   private final TaskRepository taskRepository;
   private final RoomRepository roomRepository;
+  private final WorkerRepository workerRepository;
   private final TaskMapper taskMapper;
 
   @Override
@@ -46,8 +50,11 @@ public class TaskService implements ITaskService {
     CrudUtils.throwExceptionWhenNull(taskInputDto.getId(), "Id", true);
     var oldTask = retrieveTaskById(taskInputDto.getId());
     taskMapper.updateTaskFromTaskInputDto(taskInputDto, oldTask);
-    if (nonNull(taskInputDto.getRoomId()) && !taskInputDto.getRoomId().equals(oldTask.getRoom().getId())) {
+    if (nonNull(taskInputDto.getRoomId())) {
       oldTask.setRoom(retrieveRoomById(taskInputDto.getRoomId()));
+    }
+    if (nonNull(taskInputDto.getWorkers()) && !taskInputDto.getWorkers().isEmpty()) {
+      oldTask.setWorkers(taskInputDto.getWorkers().stream().map(this::retrieveWorkerById).collect(Collectors.toSet()));
     }
     return taskMapper.taskToTaskDto(taskRepository.save(oldTask));
   }
@@ -56,6 +63,11 @@ public class TaskService implements ITaskService {
   public void deleteTaskById(String id) {
     log.info("TaskService - deleteTaskById - Id {}", id);
     taskRepository.delete(retrieveTaskById(id));
+  }
+
+  private Worker retrieveWorkerById(String id) {
+    return workerRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
+        () -> new DatabaseNotFoundException(format("Worker Id: %s not found in Database", id)));
   }
 
   private Room retrieveRoomById(String id) {

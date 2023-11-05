@@ -14,4 +14,5 @@ public class WorkerInputDto {
   private String name;
   private boolean active;
   private String roomId;
+  private String taskId;
 }

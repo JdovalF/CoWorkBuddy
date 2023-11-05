@@ -29,4 +29,7 @@ public class Worker {
   @ManyToOne
   @JoinColumn(name = "room_id")
   private Room room;
+  @ManyToOne
+  @JoinColumn(name = "task_id")
+  private Task task;
 }

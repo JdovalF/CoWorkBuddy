@@ -18,6 +18,7 @@ public interface WorkerMapper {
   List<WorkerDto> workersToListWorkerDto(List<Worker> worker);
 
   @Mapping(target = "room", ignore = true)
+  @Mapping(target = "task", ignore = true)
   @Mapping(target = "id", source = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "name", source = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "active", source = "active", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

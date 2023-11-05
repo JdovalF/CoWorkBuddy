@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -14,4 +16,5 @@ public class TaskInputDto {
   private String name;
   private boolean active;
   private String roomId;
+  private List<String> workers;
 }
