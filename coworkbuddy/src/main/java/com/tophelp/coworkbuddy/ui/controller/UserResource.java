@@ -25,44 +25,44 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserResource {
 
-    private final IUserService userService;
+  private final IUserService userService;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<List<UserDto>> retrieveAllUsers() {
-        log.info("UserResource - retrieveAllUsers");
-        return ResponseEntity.ok(userService.retrieveAllUsers());
-    }
+  @GetMapping
+  @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+  public ResponseEntity<List<UserDto>> retrieveAllUsers() {
+    log.info("UserResource - retrieveAllUsers");
+    return ResponseEntity.ok(userService.retrieveAllUsers());
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<UserDto> retrieveUserById(@PathVariable String id) {
-        log.info("UserResource - retrieveUserById - id: {}", id);
-        return ResponseEntity.ok(userService.retrieveUserById(id));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<UserDto> retrieveUserById(@PathVariable String id) {
+    log.info("UserResource - retrieveUserById - id: {}", id);
+    return ResponseEntity.ok(userService.retrieveUserById(id));
+  }
 
-    @PostMapping
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto userInputDto) {
-        log.info("UserResource - createUser");
-        var savedUser = userService.createUser(userInputDto);
-        var location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedUser.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(savedUser);
-    }
+  @PostMapping
+  @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+  public ResponseEntity<UserDto> createUser(@RequestBody UserInputDto userInputDto) {
+    log.info("UserResource - createUser");
+    var savedUser = userService.createUser(userInputDto);
+    var location = ServletUriComponentsBuilder.fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(savedUser.getId())
+        .toUri();
+    return ResponseEntity.created(location).body(savedUser);
+  }
 
-    @PatchMapping
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserInputDto userInputDto) {
-        log.info("UserResource - updateUser - id: {}", userInputDto.getId());
-        return ResponseEntity.ok(userService.updateUser(userInputDto));
-    }
+  @PatchMapping
+  @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+  public ResponseEntity<UserDto> updateUser(@RequestBody UserInputDto userInputDto) {
+    log.info("UserResource - updateUser - id: {}", userInputDto.getId());
+    return ResponseEntity.ok(userService.updateUser(userInputDto));
+  }
 
-    @GetMapping("/{id}/rooms")
-    public ResponseEntity<List<RoomDto>> retrieveRoomsByUserId(@PathVariable String id) {
-        log.info("UserResource - retrieveRoomsByUserId - id: {}", id);
-        return ResponseEntity.ok(userService.findAllRoomsByUserId(id));
-    }
+  @GetMapping("/{id}/rooms")
+  public ResponseEntity<List<RoomDto>> retrieveRoomsByUserId(@PathVariable String id) {
+    log.info("UserResource - retrieveRoomsByUserId - id: {}", id);
+    return ResponseEntity.ok(userService.findAllRoomsByUserId(id));
+  }
 
 }

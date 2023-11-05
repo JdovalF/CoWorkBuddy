@@ -5,8 +5,10 @@ import com.tophelp.coworkbuddy.infrastructure.dto.output.RoomDto;
 
 public interface IRoomService {
 
-    RoomDto createRoom(RoomInputDto roomInputDto);
-    RoomDto updateRoom(RoomInputDto roomInputDto);
-    void deleteRoomById(String id);
+  RoomDto createRoom(RoomInputDto roomInputDto);
+
+  RoomDto updateRoom(RoomInputDto roomInputDto);
+
+  void deleteRoomById(String id);
 
 }

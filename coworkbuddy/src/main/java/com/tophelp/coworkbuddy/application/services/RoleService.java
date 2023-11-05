@@ -17,20 +17,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleService implements IRoleService {
 
-    private final RoleRepository roleRepository;
-    private final RoleMapper roleMapper;
+  private final RoleRepository roleRepository;
+  private final RoleMapper roleMapper;
 
-    @Override
-    public List<RoleDto> retrieveAllRoles() {
-        log.info("RoleService - retrieveAllRoles");
-        return roleRepository.findAll().stream().map(roleMapper::roleToRoleDto).toList();
-    }
+  @Override
+  public List<RoleDto> retrieveAllRoles() {
+    log.info("RoleService - retrieveAllRoles");
+    return roleRepository.findAll().stream().map(roleMapper::roleToRoleDto).toList();
+  }
 
-    @Override
-    public RoleDto retrieveRoleById(String id) {
-        log.info("RoleService - retrieveRoleById - Id: {}", id);
-        CrudUtils.throwExceptionWhenNull(id, "Id", true);
-        return roleMapper.roleToRoleDto(roleRepository.findById(CrudUtils.uuidFromString(id))
-                .orElseThrow(() -> new DatabaseNotFoundException(String.format("Id: %s not found in Database", id))));
-    }
+  @Override
+  public RoleDto retrieveRoleById(String id) {
+    log.info("RoleService - retrieveRoleById - Id: {}", id);
+    CrudUtils.throwExceptionWhenNull(id, "Id", true);
+    return roleMapper.roleToRoleDto(roleRepository.findById(CrudUtils.uuidFromString(id))
+        .orElseThrow(() -> new DatabaseNotFoundException(String.format("Id: %s not found in Database", id))));
+  }
 }

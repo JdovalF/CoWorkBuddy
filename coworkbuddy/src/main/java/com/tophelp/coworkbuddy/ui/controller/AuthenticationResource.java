@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth/v1")
 @RequiredArgsConstructor
 public class AuthenticationResource {
-    private final JwtTokenService jwtTokenService;
-    private final AuthenticationManager authenticationManager;
+  private final JwtTokenService jwtTokenService;
+  private final AuthenticationManager authenticationManager;
 
-    @PostMapping("/authenticate")
-    public ResponseEntity<JwtTokenResponse> authenticate(@RequestBody JwtTokenRequest jwtTokenRequest) {
-        var authenticationToken = new UsernamePasswordAuthenticationToken(jwtTokenRequest.username(), jwtTokenRequest.password());
-        var authentication = authenticationManager.authenticate(authenticationToken);
-        var token = jwtTokenService.generateToken(authentication);
-        return ResponseEntity.ok(new JwtTokenResponse(token));
-    }
+  @PostMapping("/authenticate")
+  public ResponseEntity<JwtTokenResponse> authenticate(@RequestBody JwtTokenRequest jwtTokenRequest) {
+    var authenticationToken = new UsernamePasswordAuthenticationToken(jwtTokenRequest.username(), jwtTokenRequest.password());
+    var authentication = authenticationManager.authenticate(authenticationToken);
+    var token = jwtTokenService.generateToken(authentication);
+    return ResponseEntity.ok(new JwtTokenResponse(token));
+  }
 }

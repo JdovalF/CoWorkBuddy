@@ -8,9 +8,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 class CoworkbuddyApplicationTests {
 
-	@Test
-	void contextLoads() {
-		assertTrue(true);
-	}
+  @Test
+  void contextLoads() {
+    assertTrue(true);
+  }
 
 }

@@ -21,30 +21,30 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequiredArgsConstructor
 public class RoomResource {
 
-    private final IRoomService roomService;
+  private final IRoomService roomService;
 
-    @PostMapping()
-    public ResponseEntity<RoomDto> createRoom(@RequestBody RoomInputDto roomInputDto) {
-        log.info("RoomResource - createRoom");
-        var savedRoom = roomService.createRoom(roomInputDto);
-        var location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(savedRoom.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(savedRoom);
-    }
+  @PostMapping()
+  public ResponseEntity<RoomDto> createRoom(@RequestBody RoomInputDto roomInputDto) {
+    log.info("RoomResource - createRoom");
+    var savedRoom = roomService.createRoom(roomInputDto);
+    var location = ServletUriComponentsBuilder.fromCurrentRequest()
+        .path("/{id}")
+        .buildAndExpand(savedRoom.getId())
+        .toUri();
+    return ResponseEntity.created(location).body(savedRoom);
+  }
 
-    @PatchMapping
-    public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomInputDto roomInputDto) {
-        log.info("RoomResource - updateRoom");
-        return ResponseEntity.ok(roomService.updateRoom(roomInputDto));
-    }
+  @PatchMapping
+  public ResponseEntity<RoomDto> updateRoom(@RequestBody RoomInputDto roomInputDto) {
+    log.info("RoomResource - updateRoom");
+    return ResponseEntity.ok(roomService.updateRoom(roomInputDto));
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoomById(@PathVariable String id) {
-        log.info("RoomResource - deleteRoomById - Id: {}", id);
-        roomService.deleteRoomById(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> deleteRoomById(@PathVariable String id) {
+    log.info("RoomResource - deleteRoomById - Id: {}", id);
+    roomService.deleteRoomById(id);
+    return ResponseEntity.noContent().build();
+  }
 
 }

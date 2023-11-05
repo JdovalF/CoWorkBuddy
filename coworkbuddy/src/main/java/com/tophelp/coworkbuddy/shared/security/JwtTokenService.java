@@ -18,23 +18,23 @@ import static java.time.temporal.ChronoUnit.MINUTES;
 @Service
 @RequiredArgsConstructor
 public class JwtTokenService {
-    private final JwtEncoder jwtEncoder;
+  private final JwtEncoder jwtEncoder;
 
-    public String generateToken(Authentication authentication) {
-        var claims = JwtClaimsSet.builder()
-                .issuer("self")
-                .issuedAt(Instant.now())
-                .expiresAt(Instant.now().plus(90, MINUTES))
-                .subject(authentication.getName())
-                .claim("scope", createScope(authentication))
-                .build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
-    }
+  public String generateToken(Authentication authentication) {
+    var claims = JwtClaimsSet.builder()
+        .issuer("self")
+        .issuedAt(Instant.now())
+        .expiresAt(Instant.now().plus(90, MINUTES))
+        .subject(authentication.getName())
+        .claim("scope", createScope(authentication))
+        .build();
+    return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+  }
 
-    private String createScope(Authentication authentication) {
-        return authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
-    }
+  private String createScope(Authentication authentication) {
+    return authentication.getAuthorities()
+        .stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.joining(" "));
+  }
 }

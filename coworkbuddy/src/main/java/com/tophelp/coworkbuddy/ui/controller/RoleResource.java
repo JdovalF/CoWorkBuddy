@@ -19,18 +19,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RoleResource {
 
-    private final IRoleService roleService;
+  private final IRoleService roleService;
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
-    public ResponseEntity<List<RoleDto>> retrieveAllRoles() {
-        log.info("RoleController - retrieveAllRoles");
-        return ResponseEntity.ok(roleService.retrieveAllRoles());
-    }
+  @GetMapping
+  @PreAuthorize("hasAuthority('SCOPE_ADMIN')")
+  public ResponseEntity<List<RoleDto>> retrieveAllRoles() {
+    log.info("RoleController - retrieveAllRoles");
+    return ResponseEntity.ok(roleService.retrieveAllRoles());
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RoleDto> retrieveRoleById(@PathVariable String id) {
-        log.info("RoleController - retrieveRoleById - Id: {}", id);
-        return ResponseEntity.ok(roleService.retrieveRoleById(id));
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<RoleDto> retrieveRoleById(@PathVariable String id) {
+    log.info("RoleController - retrieveRoleById - Id: {}", id);
+    return ResponseEntity.ok(roleService.retrieveRoleById(id));
+  }
 }

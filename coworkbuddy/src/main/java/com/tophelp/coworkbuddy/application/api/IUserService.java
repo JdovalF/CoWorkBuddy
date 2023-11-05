@@ -7,10 +7,14 @@ import com.tophelp.coworkbuddy.infrastructure.dto.output.UserDto;
 import java.util.List;
 
 public interface IUserService {
-    List<UserDto> retrieveAllUsers();
-    UserDto retrieveUserById(String id);
-    UserDto createUser(UserInputDto userInputDto);
-    UserDto updateUser(UserInputDto userInputDto);
-    List<RoomDto> findAllRoomsByUserId(String id);
+  List<UserDto> retrieveAllUsers();
+
+  UserDto retrieveUserById(String id);
+
+  UserDto createUser(UserInputDto userInputDto);
+
+  UserDto updateUser(UserInputDto userInputDto);
+
+  List<RoomDto> findAllRoomsByUserId(String id);
 
 }

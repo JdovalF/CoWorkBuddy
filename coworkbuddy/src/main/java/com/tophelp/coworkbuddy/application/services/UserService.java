@@ -33,77 +33,77 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class UserService implements IUserService {
 
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final RoomRepository roomRepository;
-    private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final RoleRepository roleRepository;
+  private final RoomRepository roomRepository;
+  private final UserMapper userMapper;
+  private final PasswordEncoder passwordEncoder;
 
-    @Override
-    public List<UserDto> retrieveAllUsers() {
-        log.info("UserService - retrieveAllUsers");
-        return userRepository.findAll().stream().map(userMapper::userToUserDTO).toList();
-    }
+  @Override
+  public List<UserDto> retrieveAllUsers() {
+    log.info("UserService - retrieveAllUsers");
+    return userRepository.findAll().stream().map(userMapper::userToUserDTO).toList();
+  }
 
-    @Override
-    public UserDto retrieveUserById(String id) {
-        log.info("UserService - retrieveUserById - Id: {}", id);
-        CrudUtils.throwExceptionWhenNull(id, "Id", true);
-        return userMapper.userToUserDTO(userRepository.findById(CrudUtils.uuidFromString(id))
-                .orElseThrow(() -> new DatabaseNotFoundException(format("Id: %s not found in Database", id))));
-    }
+  @Override
+  public UserDto retrieveUserById(String id) {
+    log.info("UserService - retrieveUserById - Id: {}", id);
+    CrudUtils.throwExceptionWhenNull(id, "Id", true);
+    return userMapper.userToUserDTO(userRepository.findById(CrudUtils.uuidFromString(id))
+        .orElseThrow(() -> new DatabaseNotFoundException(format("Id: %s not found in Database", id))));
+  }
 
-    @Override
-    public UserDto createUser(UserInputDto userInputDto) {
-        log.info("UserService - createUser");
-        CrudUtils.throwExceptionWhenNull(userInputDto.getId(), "Id", false);
-        CrudUtils.throwExceptionWhenNull(userInputDto.getPassword(), "Password", true);
-        var newUser = userMapper.userInputDtoToUser(userInputDto);
-        newUser.setRoles(isNull(userInputDto.getRoles()) || userInputDto.getRoles().isEmpty()
-                ? Set.of(roleRepository.findRoleByName("USER").orElseThrow(() -> new DatabaseNotFoundException(
-                        format("Role: %s not found in Database", "USER"))))
-                : userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet()));
-        newUser.setRooms(new HashSet<>());
-        newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
-        newUser.setId(UUID.randomUUID());
-        return userMapper.userToUserDTO(userRepository.save(newUser));
-    }
+  @Override
+  public UserDto createUser(UserInputDto userInputDto) {
+    log.info("UserService - createUser");
+    CrudUtils.throwExceptionWhenNull(userInputDto.getId(), "Id", false);
+    CrudUtils.throwExceptionWhenNull(userInputDto.getPassword(), "Password", true);
+    var newUser = userMapper.userInputDtoToUser(userInputDto);
+    newUser.setRoles(isNull(userInputDto.getRoles()) || userInputDto.getRoles().isEmpty()
+        ? Set.of(roleRepository.findRoleByName("USER").orElseThrow(() -> new DatabaseNotFoundException(
+        format("Role: %s not found in Database", "USER"))))
+        : userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet()));
+    newUser.setRooms(new HashSet<>());
+    newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
+    newUser.setId(UUID.randomUUID());
+    return userMapper.userToUserDTO(userRepository.save(newUser));
+  }
 
-    @Override
-    public UserDto updateUser(UserInputDto userInputDto) {
-        log.info("UserService - updateUser - Id: {}", userInputDto.getId());
-        CrudUtils.throwExceptionWhenNull(userInputDto.getId(), "Id", true);
-        User actualUser = userRepository.findById(CrudUtils.uuidFromString(userInputDto.getId())).orElseThrow(
-              () -> new DatabaseNotFoundException(format("Id: %s not found in Database", userInputDto.getId())));
-        userMapper.updateUserFromUserInputDto(userInputDto, actualUser);
-        if(nonNull(userInputDto.getPassword())
-           && !passwordEncoder.matches(userInputDto.getPassword(), actualUser.getPassword())) {
-            actualUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
-        }
-        if(nonNull(userInputDto.getRoles()) && !userInputDto.getRoles().isEmpty()) {
-            Set<Role> roles = userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet());
-            actualUser.setRoles(roles);
-        }
-        if(nonNull(userInputDto.getRooms()) && !userInputDto.getRooms().isEmpty()) {
-            Set<Room> rooms = userInputDto.getRooms().stream().map(this::findRoomById).collect(Collectors.toSet());
-            actualUser.setRooms(rooms);
-        }
-        return userMapper.userToUserDTO(userRepository.save(actualUser));
+  @Override
+  public UserDto updateUser(UserInputDto userInputDto) {
+    log.info("UserService - updateUser - Id: {}", userInputDto.getId());
+    CrudUtils.throwExceptionWhenNull(userInputDto.getId(), "Id", true);
+    User actualUser = userRepository.findById(CrudUtils.uuidFromString(userInputDto.getId())).orElseThrow(
+        () -> new DatabaseNotFoundException(format("Id: %s not found in Database", userInputDto.getId())));
+    userMapper.updateUserFromUserInputDto(userInputDto, actualUser);
+    if (nonNull(userInputDto.getPassword())
+        && !passwordEncoder.matches(userInputDto.getPassword(), actualUser.getPassword())) {
+      actualUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
     }
+    if (nonNull(userInputDto.getRoles()) && !userInputDto.getRoles().isEmpty()) {
+      Set<Role> roles = userInputDto.getRoles().stream().map(this::findRoleById).collect(Collectors.toSet());
+      actualUser.setRoles(roles);
+    }
+    if (nonNull(userInputDto.getRooms()) && !userInputDto.getRooms().isEmpty()) {
+      Set<Room> rooms = userInputDto.getRooms().stream().map(this::findRoomById).collect(Collectors.toSet());
+      actualUser.setRooms(rooms);
+    }
+    return userMapper.userToUserDTO(userRepository.save(actualUser));
+  }
 
-    @Override
-    public List<RoomDto> findAllRoomsByUserId(String id) {
-        return this.retrieveUserById(id).getRooms().stream().toList();
-    }
+  @Override
+  public List<RoomDto> findAllRoomsByUserId(String id) {
+    return this.retrieveUserById(id).getRooms().stream().toList();
+  }
 
-    private Room findRoomById(String id) {
-        return roomRepository.findById(CrudUtils.uuidFromString(id))
-                .orElseThrow(() -> new DatabaseNotFoundException(format("Room with id: %s not found in Database", id)));
-    }
+  private Room findRoomById(String id) {
+    return roomRepository.findById(CrudUtils.uuidFromString(id))
+        .orElseThrow(() -> new DatabaseNotFoundException(format("Room with id: %s not found in Database", id)));
+  }
 
-    private Role findRoleById(String id) {
-        return roleRepository.findById(CrudUtils.uuidFromString(id))
-                .orElseThrow(() -> new DatabaseNotFoundException(format("Role with id: %s not found in Database", id)));
-    }
+  private Role findRoleById(String id) {
+    return roleRepository.findById(CrudUtils.uuidFromString(id))
+        .orElseThrow(() -> new DatabaseNotFoundException(format("Role with id: %s not found in Database", id)));
+  }
 
 }

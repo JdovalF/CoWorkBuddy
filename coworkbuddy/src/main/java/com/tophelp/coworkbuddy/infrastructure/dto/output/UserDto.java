@@ -13,9 +13,9 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode
 public class UserDto {
-    private UUID id;
-    private String username;
-    private String email;
-    private Set<RoleDto> roles;
-    private Set<RoomDto> rooms;
+  private UUID id;
+  private String username;
+  private String email;
+  private Set<RoleDto> roles;
+  private Set<RoomDto> rooms;
 }

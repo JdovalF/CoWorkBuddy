@@ -24,48 +24,48 @@ import static java.util.Objects.nonNull;
 @RequiredArgsConstructor
 public class RoomService implements IRoomService {
 
-    private final RoomRepository roomRepository;
-    private final UserRepository userRepository;
-    private final RoomMapper roomMapper;
+  private final RoomRepository roomRepository;
+  private final UserRepository userRepository;
+  private final RoomMapper roomMapper;
 
-    @Override
-    public RoomDto createRoom(RoomInputDto roomInputDto) {
-        log.info("RoomService - createRoom");
-        CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", false);
-        CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
-        var actualUser = retrieveUserFromRoomInputDto(roomInputDto.getUserId());
-        var actualRoom = Room.builder().id(UUID.randomUUID()).name(roomInputDto.getName()).user(actualUser).build();
-        return roomMapper.roomToRoomDto(roomRepository.save(actualRoom));
-    }
+  @Override
+  public RoomDto createRoom(RoomInputDto roomInputDto) {
+    log.info("RoomService - createRoom");
+    CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", false);
+    CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
+    var actualUser = retrieveUserFromRoomInputDto(roomInputDto.getUserId());
+    var actualRoom = Room.builder().id(UUID.randomUUID()).name(roomInputDto.getName()).user(actualUser).build();
+    return roomMapper.roomToRoomDto(roomRepository.save(actualRoom));
+  }
 
-    @Override
-    public RoomDto updateRoom(RoomInputDto roomInputDto) {
-        log.info("RoomService - updateRoom");
-        CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", true);
-        CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
-        var oldRoom = retrieveRoomById(roomInputDto.getId());
-        oldRoom.setName(roomInputDto.getName());
-        if(nonNull(roomInputDto.getUserId())
-           && !CrudUtils.uuidFromString(roomInputDto.getUserId()).equals(oldRoom.getUser().getId())) {
-            oldRoom.setUser(retrieveUserFromRoomInputDto(roomInputDto.getUserId()));
-        }
-        return roomMapper.roomToRoomDto(roomRepository.save(oldRoom));
+  @Override
+  public RoomDto updateRoom(RoomInputDto roomInputDto) {
+    log.info("RoomService - updateRoom");
+    CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", true);
+    CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
+    var oldRoom = retrieveRoomById(roomInputDto.getId());
+    oldRoom.setName(roomInputDto.getName());
+    if (nonNull(roomInputDto.getUserId())
+        && !CrudUtils.uuidFromString(roomInputDto.getUserId()).equals(oldRoom.getUser().getId())) {
+      oldRoom.setUser(retrieveUserFromRoomInputDto(roomInputDto.getUserId()));
     }
+    return roomMapper.roomToRoomDto(roomRepository.save(oldRoom));
+  }
 
-    @Override
-    public void deleteRoomById(String id) {
-        log.info("RoomService - deleteRoomById - Id: {}", id);
-        roomRepository.delete(retrieveRoomById(id));
-    }
+  @Override
+  public void deleteRoomById(String id) {
+    log.info("RoomService - deleteRoomById - Id: {}", id);
+    roomRepository.delete(retrieveRoomById(id));
+  }
 
-    private Room retrieveRoomById(String id) {
-        return roomRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
-                () -> new DatabaseNotFoundException(format("Room Id: %s not found in Database", id)));
-    }
+  private Room retrieveRoomById(String id) {
+    return roomRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
+        () -> new DatabaseNotFoundException(format("Room Id: %s not found in Database", id)));
+  }
 
-    private User retrieveUserFromRoomInputDto(String id) {
-        return userRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
-                () -> new DatabaseNotFoundException(format("User Id: %s not found in Database", id)));
-    }
+  private User retrieveUserFromRoomInputDto(String id) {
+    return userRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
+        () -> new DatabaseNotFoundException(format("User Id: %s not found in Database", id)));
+  }
 
 }

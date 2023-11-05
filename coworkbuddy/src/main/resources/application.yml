@@ -13,7 +13,7 @@ management:
         include: health,info,metrics
 
 spring:
-# Datasource Configuration
+  # Datasource Configuration
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres?currentSchema=coworkbuddy
     username: postgres
@@ -21,13 +21,13 @@ spring:
     # url: jdbc:postgresql://<uri>/<database>?currentSchema=<schema-name>
     # username: <user-name>
     # password: <password>
-# Jpa - Hibernate
+  # Jpa - Hibernate
   jpa:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-# Flyway Configuration
+  # Flyway Configuration
   flyway:
     # url: jdbc:postgresql://<uri>/<database>
     url: jdbc:postgresql://localhost:5432/postgres

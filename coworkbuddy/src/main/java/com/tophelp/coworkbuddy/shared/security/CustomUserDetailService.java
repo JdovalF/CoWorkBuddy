@@ -17,21 +17,21 @@ import java.util.Set;
 @Service
 public class CustomUserDetailService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public CustomUserDetailService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+  public CustomUserDetailService(UserRepository userRepository) {
+    this.userRepository = userRepository;
+  }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new DatabaseNotFoundException(String.format("Username: %s not found in Database", username)));
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
-    }
+  @Override
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userRepository.findByUsername(username).orElseThrow(
+        () -> new DatabaseNotFoundException(String.format("Username: %s not found in Database", username)));
+    return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+        mapRolesToAuthorities(user.getRoles()));
+  }
 
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
-    }
+  private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {
+    return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).toList();
+  }
 }

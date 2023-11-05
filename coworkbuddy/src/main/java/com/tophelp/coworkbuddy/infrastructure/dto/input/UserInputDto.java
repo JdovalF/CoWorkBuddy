@@ -10,10 +10,10 @@ import java.util.Set;
 @Setter
 @Builder
 public class UserInputDto {
-    private String id;
-    private String username;
-    private String email;
-    private String password;
-    private Set<String> roles;
-    private Set<String> rooms;
+  private String id;
+  private String username;
+  private String email;
+  private String password;
+  private Set<String> roles;
+  private Set<String> rooms;
 }

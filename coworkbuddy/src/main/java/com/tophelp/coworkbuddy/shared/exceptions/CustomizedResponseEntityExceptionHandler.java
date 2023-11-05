@@ -13,30 +13,30 @@ import java.time.LocalDateTime;
 @ControllerAdvice
 public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                ex.getMessage(), request.getDescription(false));
+  @ExceptionHandler(Exception.class)
+  public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
+    ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+        ex.getMessage(), request.getDescription(false));
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
 
-    }
+  }
 
-    @ExceptionHandler(DatabaseNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleDatabaseNotFoundException(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                ex.getMessage(), request.getDescription(false));
+  @ExceptionHandler(DatabaseNotFoundException.class)
+  public final ResponseEntity<ErrorDetails> handleDatabaseNotFoundException(Exception ex, WebRequest request) {
+    ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+        ex.getMessage(), request.getDescription(false));
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
 
-    }
+  }
 
-    @ExceptionHandler(CoworkBuddyTechnicalException.class)
-    public final ResponseEntity<ErrorDetails> handleCoworkBuddyTechnicalException(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
-                ex.getMessage(), request.getDescription(false));
+  @ExceptionHandler(CoworkBuddyTechnicalException.class)
+  public final ResponseEntity<ErrorDetails> handleCoworkBuddyTechnicalException(Exception ex, WebRequest request) {
+    ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(),
+        ex.getMessage(), request.getDescription(false));
 
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
 
-    }
+  }
 }

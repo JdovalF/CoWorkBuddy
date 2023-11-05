@@ -10,6 +10,6 @@ import lombok.Setter;
 @Builder
 @EqualsAndHashCode
 public class RoleInputDto {
-    private String id;
-    private String name;
+  private String id;
+  private String name;
 }

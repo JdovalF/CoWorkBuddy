@@ -5,6 +5,7 @@ import com.tophelp.coworkbuddy.infrastructure.dto.output.RoleDto;
 import java.util.List;
 
 public interface IRoleService {
-    List<RoleDto> retrieveAllRoles();
-    RoleDto retrieveRoleById(String id);
+  List<RoleDto> retrieveAllRoles();
+
+  RoleDto retrieveRoleById(String id);
 }

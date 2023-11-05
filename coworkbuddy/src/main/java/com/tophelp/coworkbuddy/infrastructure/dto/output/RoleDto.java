@@ -12,6 +12,6 @@ import java.util.UUID;
 @Builder
 @EqualsAndHashCode
 public class RoleDto {
-    private UUID id;
-    private String name;
+  private UUID id;
+  private String name;
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Builder
 @EqualsAndHashCode
 public class RoomInputDto {
-    private String id;
-    private String name;
-    private String userId;
+  private String id;
+  private String name;
+  private String userId;
 }

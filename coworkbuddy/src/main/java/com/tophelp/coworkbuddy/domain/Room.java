@@ -23,15 +23,15 @@ import java.util.UUID;
 @AllArgsConstructor
 public class Room {
 
-    @Id
-    private UUID id;
-    @Column(nullable = false)
-    private String name;
-    @ManyToOne
-    @JoinColumn(name="user_id")
-    private User user;
-    @OneToMany(mappedBy = "room")
-    private Set<Task> tasks;
-    @OneToMany(mappedBy = "room")
-    private Set<Worker> workers;
+  @Id
+  private UUID id;
+  @Column(nullable = false)
+  private String name;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
+  @OneToMany(mappedBy = "room")
+  private Set<Task> tasks;
+  @OneToMany(mappedBy = "room")
+  private Set<Worker> workers;
 }
