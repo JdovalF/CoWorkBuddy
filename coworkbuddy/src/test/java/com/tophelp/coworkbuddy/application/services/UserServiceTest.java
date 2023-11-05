@@ -8,7 +8,6 @@ import com.tophelp.coworkbuddy.infrastructure.dto.input.UserInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.RoleDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.RoomDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
-import com.tophelp.coworkbuddy.infrastructure.mappers.RoleMapper;
 import com.tophelp.coworkbuddy.infrastructure.mappers.UserMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoleRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
@@ -42,8 +41,6 @@ class UserServiceTest {
   private PasswordEncoder passwordEncoder;
   @Spy
   private final UserMapper userMapper = Mappers.getMapper(UserMapper.class);
-  @Spy
-  private final RoleMapper roleMapper = Mappers.getMapper(RoleMapper.class);
 
   @Mock
   private UserRepository userRepository;
@@ -61,9 +58,7 @@ class UserServiceTest {
     when(userRepository.findAll()).thenReturn(expectedUsers);
     var actualUserDtos = userService.retrieveAllUsers();
     IntStream.rangeClosed(0, expectedUsers.size() - 1)
-        .forEach(index -> {
-          assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedUsers.get(index)), actualUserDtos.get(index)));
-        });
+        .forEach(index -> assertTrue(reflectionEquals(userMapper.userToUserDTO(expectedUsers.get(index)), actualUserDtos.get(index))));
   }
 
   @Test
@@ -84,11 +79,10 @@ class UserServiceTest {
 
   @Test
   void shouldThrowCoworkBuddyTechnicalException_whenRetrieveUserByIdCalled_withNullId() {
-    String givenId = null;
     var expectedException = new CoworkBuddyTechnicalException("Id is required");
     assertEquals(expectedException.getMessage(),
         assertThrows(CoworkBuddyTechnicalException.class,
-            () -> userService.retrieveUserById(givenId)).getMessage());
+            () -> userService.retrieveUserById(null)).getMessage());
   }
 
   @Test
