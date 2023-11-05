@@ -3,9 +3,9 @@ package com.tophelp.coworkbuddy.application.utils;
 import com.tophelp.coworkbuddy.shared.exceptions.CoworkBuddyTechnicalException;
 import lombok.experimental.UtilityClass;
 
-import static java.util.Objects.isNull;
-
 import java.util.UUID;
+
+import static java.util.Objects.isNull;
 
 @UtilityClass
 public class CrudUtils {
