@@ -11,11 +11,7 @@ import java.util.List;
 @Setter
 @Builder
 @EqualsAndHashCode
-public class WorkerInputDto {
-  private String id;
-  private String name;
-  private boolean active;
-  private String roomId;
-  private String taskId;
-  private List<String> pairs;
+public class PairListInputDto {
+  private String room;
+  private List<PairInputDto> pairs;
 }

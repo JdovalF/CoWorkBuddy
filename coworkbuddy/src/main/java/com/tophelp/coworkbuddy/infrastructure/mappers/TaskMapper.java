@@ -9,12 +9,14 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
+import java.util.Set;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
   TaskDto taskToTaskDto(Task task);
 
   List<TaskDto> tasksToListTaskDto(List<Task> tasks);
+  Set<TaskDto> tasksToSetTaskDto(Set<Task> tasks);
 
   @Mapping(target = "room", ignore = true)
   @Mapping(target = "workers", ignore = true)

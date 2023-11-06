@@ -2,6 +2,8 @@ package com.tophelp.coworkbuddy.application.services;
 
 import com.tophelp.coworkbuddy.application.api.IWorkerService;
 import com.tophelp.coworkbuddy.application.utils.CrudUtils;
+
+import com.tophelp.coworkbuddy.domain.Pair;
 import com.tophelp.coworkbuddy.domain.Room;
 import com.tophelp.coworkbuddy.domain.Task;
 import com.tophelp.coworkbuddy.domain.Worker;
@@ -9,6 +11,7 @@ import com.tophelp.coworkbuddy.infrastructure.dto.input.WorkerInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.WorkerDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.WorkerMapper;
+import com.tophelp.coworkbuddy.infrastructure.repository.PairRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.TaskRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.WorkerRepository;
@@ -17,9 +20,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service
@@ -29,6 +34,7 @@ public class WorkerService implements IWorkerService {
   private final WorkerRepository workerRepository;
   private final RoomRepository roomRepository;
   private final TaskRepository taskRepository;
+  private final PairRepository pairRepository;
   private final WorkerMapper workerMapper;
 
   @Override
@@ -56,6 +62,9 @@ public class WorkerService implements IWorkerService {
     if (nonNull(workerInputDto.getTaskId())) {
       oldWorker.setTask(retrieveTaskById(workerInputDto.getTaskId()));
     }
+    if (nonNull(workerInputDto.getPairs()) && !workerInputDto.getPairs().isEmpty()) {
+      oldWorker.setPairs(workerInputDto.getPairs().stream().map(this::retrievePairById).toList());
+    }
     return workerMapper.workerToWorkerDto(workerRepository.save(oldWorker));
   }
 
@@ -79,4 +88,10 @@ public class WorkerService implements IWorkerService {
     return workerRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
         () -> new DatabaseNotFoundException(format("Worker Id: %s not found in Database", id)));
   }
+
+  private Pair retrievePairById(String id) {
+    return pairRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
+        () -> new DatabaseNotFoundException(format("Pair Id: %s not found in Database", id)));
+  }
+
 }
