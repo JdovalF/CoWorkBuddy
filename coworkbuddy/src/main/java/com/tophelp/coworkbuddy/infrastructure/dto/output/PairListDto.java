@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,5 +14,6 @@ import java.util.UUID;
 @EqualsAndHashCode
 public class PairListDto {
   private UUID room;
+  private boolean saved;
   private Set<TaskDto> tasks;
 }

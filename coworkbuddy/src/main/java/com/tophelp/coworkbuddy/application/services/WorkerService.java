@@ -2,7 +2,6 @@ package com.tophelp.coworkbuddy.application.services;
 
 import com.tophelp.coworkbuddy.application.api.IWorkerService;
 import com.tophelp.coworkbuddy.application.utils.CrudUtils;
-
 import com.tophelp.coworkbuddy.domain.Pair;
 import com.tophelp.coworkbuddy.domain.Room;
 import com.tophelp.coworkbuddy.domain.Task;
@@ -20,11 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.*;
 
 @Slf4j
 @Service

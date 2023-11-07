@@ -8,7 +8,7 @@ public interface IPairService {
 
   void deleteAllPairs();
 
-  PairListDto recommendPairs();
+  PairListDto recommendPairs(String roomId);
 
   PairListDto createOrUpdatePairs(PairListInputDto pairListInputDto);
 }
