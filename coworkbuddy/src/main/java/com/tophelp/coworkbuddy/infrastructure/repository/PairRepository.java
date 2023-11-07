@@ -13,7 +13,6 @@ import java.util.UUID;
 @Repository
 public interface PairRepository extends JpaRepository<Pair, UUID> {
 
-
   @Query(value = "SELECT * FROM pairs p WHERE p.pair_id IN (" +
                  "SELECT p_inner.pair_id FROM pairs p_inner " +
                  "WHERE p_inner.worker_id IN :workerIds " +
