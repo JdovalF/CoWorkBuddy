@@ -16,6 +16,7 @@ public interface TaskMapper {
   TaskDto taskToTaskDto(Task task);
 
   List<TaskDto> tasksToListTaskDto(List<Task> tasks);
+
   Set<TaskDto> tasksToSetTaskDto(Set<Task> tasks);
 
   @Mapping(target = "room", ignore = true)

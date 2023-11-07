@@ -25,15 +25,21 @@ public class Worker {
 
   @Id
   private UUID id;
+
   @Column(nullable = false)
   private String name;
+
   private boolean active;
+
   @ManyToOne
   @JoinColumn(name = "room_id")
   private Room room;
+
   @ManyToOne
   @JoinColumn(name = "task_id")
   private Task task;
+
   @OneToMany(mappedBy = "worker")
   private List<Pair> pairs;
+
 }

@@ -24,10 +24,14 @@ public class Pair {
 
   @Id
   private UUID id;
+
   @Column(nullable = false)
   private UUID pairId;
+
   @ManyToOne
   @JoinColumn(name = "worker_id")
   private Worker worker;
+
   private LocalDateTime lastPairingDate;
+
 }

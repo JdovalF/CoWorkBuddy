@@ -25,14 +25,20 @@ import java.util.UUID;
 public class User {
   @Id
   private UUID id;
+
   @Column(nullable = false)
   private String username;
+
   private String email;
+
   @Column(nullable = false)
   private String password;
+
   @ManyToMany
   @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles;
+
   @OneToMany(mappedBy = "user")
   private Set<Room> rooms;
+
 }

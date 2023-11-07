@@ -24,4 +24,5 @@ public interface WorkerMapper {
   @Mapping(target = "name", source = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "active", source = "active", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   void updateWorkerFromWorkerInputDto(WorkerInputDto workerInputDto, @MappingTarget Worker worker);
+
 }

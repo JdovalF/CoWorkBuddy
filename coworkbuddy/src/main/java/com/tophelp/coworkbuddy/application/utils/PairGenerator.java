@@ -17,7 +17,7 @@ public class PairGenerator {
     return generateAllPossiblePairs(filteredWorkers);
   }
 
-public List<List<String>> generateAllPossibleStringPairs(List<String> workers) {
+  public List<List<String>> generateAllPossibleStringPairs(List<String> workers) {
     return generateAllPossiblePairs(workers);
   }
 
@@ -28,4 +28,5 @@ public List<List<String>> generateAllPossibleStringPairs(List<String> workers) {
             .forEachOrdered(j -> pairs.add(List.of(elements.get(i), elements.get(j)))));
     return pairs;
   }
+
 }

@@ -9,4 +9,5 @@ public interface IWorkerService {
   WorkerDto updateWorker(WorkerInputDto workerInputDto);
 
   void deleteWorkerById(String id);
+
 }

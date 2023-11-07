@@ -51,7 +51,6 @@ public class JwtSecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
         .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
-//                .httpBasic(withDefaults())
         .build();
   }
 

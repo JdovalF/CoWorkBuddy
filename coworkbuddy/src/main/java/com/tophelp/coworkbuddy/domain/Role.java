@@ -22,8 +22,11 @@ import java.util.UUID;
 public class Role {
   @Id
   private UUID id;
+
   @Column(nullable = false)
   private String name;
+
   @ManyToMany(mappedBy = "roles")
   private Set<User> users;
+
 }

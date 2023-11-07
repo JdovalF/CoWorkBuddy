@@ -10,4 +10,5 @@ public interface ITaskService {
   TaskDto updateTask(TaskInputDto taskInputDto);
 
   void deleteTaskById(String id);
+
 }

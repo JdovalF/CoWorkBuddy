@@ -25,12 +25,17 @@ public class Task {
 
   @Id
   private UUID id;
+
   @Column(nullable = false)
   private String name;
+
   private boolean active;
+
   @ManyToOne
   @JoinColumn(name = "room_id")
   private Room room;
+
   @OneToMany(mappedBy = "task")
   private Set<Worker> workers;
+
 }

@@ -21,4 +21,5 @@ public interface PairRepository extends JpaRepository<Pair, UUID> {
                  "ORDER BY p.last_pairing_date DESC LIMIT 1",
       nativeQuery = true)
   Optional<Pair> findMostRecentPairing(@Param("workerIds") List<UUID> workerIds, @Param("size") long size);
+
 }
