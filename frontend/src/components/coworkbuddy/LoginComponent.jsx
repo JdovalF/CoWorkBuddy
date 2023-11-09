@@ -29,7 +29,7 @@ function LoginComponent() {
 
     return (
         <div className="Login">
-            <h1>Time to Login</h1>
+            <h1 className="ms-2 fs-2 fw-bold text-dark">Time to Login</h1>
             <div className="LoginForm">
                 {showErrorMessage && <div className="errorMessage">Authentication Failed. Please check your credentials</div>}
                 <div>

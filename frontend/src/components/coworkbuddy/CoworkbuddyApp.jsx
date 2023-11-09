@@ -6,9 +6,18 @@ import LoginComponent from './LoginComponent';
 import ErrorComponent  from './ErrorComponent';
 import WelcomeComponent  from './WelcomeComponent';
 import LogoutComponent from './LogoutComponent';
-
+import UsersComponent from './UsersComponent';
+import UserComponent from './UserComponent';
 
 import './Coworkbuddy.css';
+
+function AdminRoute({ children }) {
+    const authContext = useAuth()
+    if(authContext.isAuthenticated && authContext.isAdmin) {
+        return children
+    }
+    return <Navigate to='/' />
+}
 
 function AuthenticatedRoute({ children }) {
     const authContext = useAuth()
@@ -35,12 +44,23 @@ export default function CoworkbuddyApp() {
                         </AuthenticatedRoute>
                     }/>
 
+                    <Route path='/users' element={
+                        <AdminRoute>
+                            <UsersComponent />
+                        </AdminRoute>
+                    }/>
+
+                    <Route path='/user/:id' element= {
+                        <AdminRoute>
+                            <UserComponent />
+                        </AdminRoute>
+                    }/>
+
                     <Route path='/logout' element={
                         <AuthenticatedRoute>
                             <LogoutComponent />
                         </AuthenticatedRoute>
                     }/>
-
 
                     <Route path='*' element={<ErrorComponent />}/>
                 </Routes>

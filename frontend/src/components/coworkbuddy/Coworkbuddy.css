@@ -13,3 +13,13 @@ footer {
 .errorMessage {
     color: red;
 }
+
+.chip {
+    display: inline-block;
+    font-size: .9rem;
+    padding: 2px 8px;
+    margin: 2px;
+    background-color: rgb(113, 185, 173);
+    color: #fff;
+    border-radius: 4px;
+  }

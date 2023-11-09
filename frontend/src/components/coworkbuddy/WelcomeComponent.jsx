@@ -6,7 +6,7 @@ export default function WelcomeComponent() {
 
     return (
         <div className="WelcomeComponent">
-            <h1>Welcome {username} !</h1>
+            <h1 className='ms-2 fs-2 fw-bold text-dark'>Welcome {username}!</h1>
             <div>Your rooms are <Link>Here</Link>.</div>
         </div>
     )
