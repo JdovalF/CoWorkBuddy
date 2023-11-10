@@ -1,16 +1,12 @@
 import { useEffect, useState } from "react"
-
+import { useNavigate } from "react-router-dom"
 import { retrieveAllUsersApi } from "../api/UserApiService"
 import ChipComponent from "./utils/ChipComponent"
-import { useNavigate } from "react-router-dom"
-
-
 
 export default function UsersComponent() {
 
     const [users, setUsers] = useState([])
     const navigate = useNavigate()
-
     useEffect(() => refreshUsers(), [])
 
     function refreshUsers() {
@@ -20,16 +16,18 @@ export default function UsersComponent() {
     }
 
     function updateUser(id) {
-        navigate(`/user/${id}`)
+        navigate(`/users/${id}`)
     }
 
     function addNewUser() {
-        navigate('/user/-1')
+        navigate('/users/-1')
     }
 
     return (
         <div className="container">
             <h1 className="ms-2 fs-2 fw-bold text-dark">Users</h1>
+            {
+            users.length > 0 &&
             <div>
                 <table className="table">
                     <thead>
@@ -54,6 +52,7 @@ export default function UsersComponent() {
                     </tbody>
                 </table>
             </div>
+            }
             <button className="btn btn-outline-primary m-5" onClick={() => addNewUser()}>Add new User</button>
         </div>
     )

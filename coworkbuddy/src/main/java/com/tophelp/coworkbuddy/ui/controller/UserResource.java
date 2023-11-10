@@ -36,8 +36,14 @@ public class UserResource {
 
   @GetMapping("/{id}")
   public ResponseEntity<UserDto> retrieveUserById(@PathVariable String id) {
-    log.info("UserResource - retrieveUserById - id: {}", id);
+    log.info("UserResource - retrieveUserById - Id: {}", id);
     return ResponseEntity.ok(userService.retrieveUserById(id));
+  }
+
+  @GetMapping("/username/{username}")
+  public ResponseEntity<UserDto> retrieveUserByUsername(@PathVariable String username) {
+    log.info("UserResource - retrieveUserByUsername - Username: {}", username);
+    return ResponseEntity.ok(userService.retrieveUserByUsername(username));
   }
 
   @PostMapping

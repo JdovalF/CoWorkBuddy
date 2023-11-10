@@ -94,6 +94,12 @@ public class UserService implements IUserService {
     return this.retrieveUserById(id).getRooms().stream().toList();
   }
 
+  @Override
+  public UserDto retrieveUserByUsername(String username) {
+    return userMapper.userToUserDTO(userRepository.findByUsername(username)
+        .orElseThrow(() -> new DatabaseNotFoundException(format("User with Username: %s not found in Database", username))));
+  }
+
   private Room findRoomById(String id) {
     return roomRepository.findById(CrudUtils.uuidFromString(id))
         .orElseThrow(() -> new DatabaseNotFoundException(format("Room with id: %s not found in Database", id)));

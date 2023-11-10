@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from '../security/AuthContext';
 
-import AuthProvider, { useAuth } from '../security/AuthContext';
 import HeaderComponent from './HeaderComponent';
 import LoginComponent from './LoginComponent';
 import ErrorComponent  from './ErrorComponent';
@@ -8,32 +8,34 @@ import WelcomeComponent  from './WelcomeComponent';
 import LogoutComponent from './LogoutComponent';
 import UsersComponent from './UsersComponent';
 import UserComponent from './UserComponent';
+import RoomsComponent from './RoomsComponent';
 
 import './Coworkbuddy.css';
 
-function AdminRoute({ children }) {
-    const authContext = useAuth()
-    if(authContext.isAuthenticated && authContext.isAdmin) {
-        return children
-    }
-    return <Navigate to='/' />
-}
-
-function AuthenticatedRoute({ children }) {
-    const authContext = useAuth()
-    if(authContext.isAuthenticated) {
-        return children
-    }
-    return <Navigate to='/' />
-}
-
 export default function CoworkbuddyApp() {
+
+    const authContext = useAuth();
+
+    const AdminRoute = ({ children }) => {
+        if (authContext.isAuthenticated && authContext.isAdmin) {
+            return children;
+        }
+        return <Navigate to="/" />;
+    };
+    
+    const AuthenticatedRoute = ({ children }) => {
+        if (authContext.isAuthenticated) {
+            return children;
+        }
+        return <Navigate to="/" />;
+    };
 
     return (
     <div className='CoworkbuddyApp'>
-        <AuthProvider>
-            <BrowserRouter>
-                <HeaderComponent />
+        <BrowserRouter>
+            <HeaderComponent />
+            {
+                authContext && 
                 <Routes>
                     <Route path='/' element={<LoginComponent/>} />
                     <Route path='/login' element={<LoginComponent/>} />
@@ -50,11 +52,29 @@ export default function CoworkbuddyApp() {
                         </AdminRoute>
                     }/>
 
-                    <Route path='/user/:id' element= {
+                    <Route path='/users/:id' element= {
                         <AdminRoute>
                             <UserComponent />
                         </AdminRoute>
                     }/>
+
+                    <Route path='/rooms' element= {
+                        <AuthenticatedRoute>
+                            <RoomsComponent />
+                        </AuthenticatedRoute>
+                    } />
+
+                    <Route path='' element= {
+                        <AuthenticatedRoute>
+                            {/* todo: add room/:id component */}
+                        </AuthenticatedRoute>
+                    } />
+
+                    <Route path='' element= {
+                        <AuthenticatedRoute>
+                            {/* todo: add pairs/:id component */}
+                        </AuthenticatedRoute>
+                    } />
 
                     <Route path='/logout' element={
                         <AuthenticatedRoute>
@@ -64,8 +84,8 @@ export default function CoworkbuddyApp() {
 
                     <Route path='*' element={<ErrorComponent />}/>
                 </Routes>
-            </BrowserRouter>
-        </AuthProvider>
+            }
+        </BrowserRouter>
     </div>
     );
 }

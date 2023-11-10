@@ -7,7 +7,7 @@ export default function WelcomeComponent() {
     return (
         <div className="WelcomeComponent">
             <h1 className='ms-2 fs-2 fw-bold text-dark'>Welcome {username}!</h1>
-            <div>Your rooms are <Link>Here</Link>.</div>
+            <div>Your rooms are <Link to='/rooms'>Here</Link>.</div>
         </div>
     )
 }

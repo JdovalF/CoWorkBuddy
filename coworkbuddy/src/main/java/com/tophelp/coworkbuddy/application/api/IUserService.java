@@ -17,4 +17,5 @@ public interface IUserService {
 
   List<RoomDto> findAllRoomsByUserId(String id);
 
+  UserDto retrieveUserByUsername(String username);
 }

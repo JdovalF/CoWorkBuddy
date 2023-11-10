@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { createUserApi, retrieveUserByIdApi, updateUserApi } from "../api/UserApiService"
 import { Formik, Form, Field, ErrorMessage } from 'formik';
@@ -9,20 +9,19 @@ export default function UserComponent() {
     const [password, setPassword] = useState('')
     const [email, setEmail] = useState('')
     const navigate = useNavigate()
+    useEffect(() => refreshUser(id) ,[id])
 
-    const retrieveUserById = useCallback(() => {
+    function refreshUser(id) {
         if(id !== '-1') {
             retrieveUserByIdApi(id)
                 .then((response) => {
                     setUsername(response.data.username)
-                    setPassword('')
+                    setPassword('********')
                     setEmail(response.data.email)
                 })
                 .catch((error) => console.log(error))
         }
-    }, [id])
-
-    useEffect(() => retrieveUserById(), [id, retrieveUserById] )
+    }
 
     function validate(values) {
         const errors = {};
@@ -31,7 +30,7 @@ export default function UserComponent() {
     
         const emailValue = trimValue(values.email);
         const usernameValue = trimValue(values.username);
-        const passwordValue = trimValue(values.password);
+        const passwordValue = values.password !== '********' ? trimValue(values.password) : null;
     
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[!@#$%^&.*])[a-zA-Z0-9.!@#$%^&*]{8,}$/;
@@ -54,7 +53,8 @@ export default function UserComponent() {
     }
 
     function onSubmit(values) {
-        const passwordValue = values.password === null || values.password.trim() === '' ? null : values.password;
+        const passwordValue = values.password === '********' || values.password === null 
+            || values.password.trim() === '' ? null : values.password;
         const user = {
             id: id,
             username: values.username,
@@ -63,13 +63,13 @@ export default function UserComponent() {
         }
 
         if(id !== '-1') {
-            updateUserApi(user).then((response) => {
+            updateUserApi(user).then(() => {
                 navigate('/users')
             })
             .catch((error) => console.log(error) )
         } else {
             user.id = null
-            createUserApi(user).then((response) => {
+            createUserApi(user).then(() => {
                 navigate('/users')
             })
             .catch((error) => console.log(error) )
@@ -98,7 +98,7 @@ export default function UserComponent() {
                                     component='div' 
                                     className="alert alert-warning" 
                                 />
-                                <Field type='text' className='form-control' name='username' autocomplete="current-username"></Field>
+                                <Field type='text' className='form-control' name='username'></Field>
                             </fieldset>
                             <fieldset className="form-group" >
                                 <label>Email:</label>
