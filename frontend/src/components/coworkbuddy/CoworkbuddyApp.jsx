@@ -12,6 +12,7 @@ import RoomsComponent from './RoomsComponent';
 
 import './Coworkbuddy.css';
 import RoomComponent from './RoomComponent';
+import PairsComponent from './PairsComponent';
 
 export default function CoworkbuddyApp() {
 
@@ -68,6 +69,12 @@ export default function CoworkbuddyApp() {
                     <Route path='rooms/:id/users/:userId' element= {
                         <AuthenticatedRoute>
                             <RoomComponent />
+                        </AuthenticatedRoute>
+                    } />
+
+                    <Route path='/pairs/:roomId' element= {
+                        <AuthenticatedRoute>
+                           <PairsComponent />
                         </AuthenticatedRoute>
                     } />
 
