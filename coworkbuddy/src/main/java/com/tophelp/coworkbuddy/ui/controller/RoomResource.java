@@ -28,6 +28,12 @@ public class RoomResource {
 
   private final IRoomService roomService;
 
+  @GetMapping("/{id}")
+  public ResponseEntity<RoomDto> retrieveRoomById(@PathVariable String id) {
+    log.info("RoomResource - retrieveRoomById - Id: {}", id);
+    return ResponseEntity.ok(roomService.retrieveRoomDtoById(id));
+  }
+
   @PostMapping()
   public ResponseEntity<RoomDto> createRoom(@RequestBody RoomInputDto roomInputDto) {
     log.info("RoomResource - createRoom");

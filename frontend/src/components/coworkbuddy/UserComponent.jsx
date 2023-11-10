@@ -77,9 +77,9 @@ export default function UserComponent() {
     }
 
     return (
-        <div className="container">
-            <h1 className="fw-bold text-dark">Enter User Details</h1>
-            <div>
+        <div className="container p-5">
+            <h1 className="fs-2 fw-bold text-dark">User</h1>
+            <div className="d-flex flex-column">
                 <Formik
                     initialValues={  {username, email, password } }
                     enableReinitialize = {true}
@@ -91,35 +91,27 @@ export default function UserComponent() {
                     {
                        (props) => (
                         <Form>
-                            <fieldset className="form-group" >
-                                <label>Username:</label>
-                                <ErrorMessage 
-                                    name="username" 
-                                    component='div' 
-                                    className="alert alert-warning" 
-                                />
-                                <Field type='text' className='form-control' name='username'></Field>
+                            <fieldset className="justify-content-center row align-items-baseline mt-1" >
+                                <label className="col-sm-1">Username:</label>
+                                <Field type='text' className="border border-primary col-sm-4" name='username' ></Field>
                             </fieldset>
-                            <fieldset className="form-group" >
-                                <label>Email:</label>
-                                <ErrorMessage 
-                                    name="email" 
-                                    component='div' 
-                                    className="alert alert-warning" 
-                                />
-                                <Field type='email' className='form-control' name='email' autocomplete="current-email"></Field>
+                            <ErrorMessage name="username" component='div' className="alert alert-warning" />
+
+                            <fieldset className="justify-content-center row align-items-baseline">
+                                <label className="col-sm-1">Email:</label>
+                                <Field type='email' className="border border-primary col-sm-4" name='email' autocomplete="current-email"></Field>
                             </fieldset>
-                            <fieldset className="form-group" >
-                                <label>Password:</label>
-                                <ErrorMessage 
-                                    name="password"
-                                    component='div'
-                                    className="alert alert-warning" 
-                                />
-                                <Field type='password' className='form-control' name='password' autocomplete="current-password"></Field>
+                            <ErrorMessage name="email" component='div' className="alert alert-warning" />
+
+                            
+                            <fieldset className="justify-content-center row align-items-baseline" >
+                                <label className="col-sm-1">Password:</label>
+                                <Field type='password' className="border border-primary col-sm-4" name='password'  autocomplete="current-password"></Field>
                             </fieldset>
-                            <div>
-                                <button className="btn btn-outline-success m-5" type="submit">Save</button>
+                            <ErrorMessage name="password" component='div' className="alert alert-warning" />
+
+                            <div className="mt-2">
+                                <button className="btn btn-outline-success btn" type="submit">Save</button>
                             </div>
                         </Form>
                        )     

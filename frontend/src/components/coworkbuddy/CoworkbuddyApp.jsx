@@ -11,6 +11,7 @@ import UserComponent from './UserComponent';
 import RoomsComponent from './RoomsComponent';
 
 import './Coworkbuddy.css';
+import RoomComponent from './RoomComponent';
 
 export default function CoworkbuddyApp() {
 
@@ -64,9 +65,9 @@ export default function CoworkbuddyApp() {
                         </AuthenticatedRoute>
                     } />
 
-                    <Route path='' element= {
+                    <Route path='rooms/:id/users/:userId' element= {
                         <AuthenticatedRoute>
-                            {/* todo: add room/:id component */}
+                            <RoomComponent />
                         </AuthenticatedRoute>
                     } />
 

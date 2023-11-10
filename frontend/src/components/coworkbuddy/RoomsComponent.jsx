@@ -9,18 +9,22 @@ export default function RoomsComponent() {
     const authContext = useAuth()
     const username = authContext.username
     const [rooms, setRooms] = useState([])
+    const [userId, setUserId] = useState()
     const [message, setMessage] = useState()
     const navigate = useNavigate()
     useEffect(() => refreshRooms(username), [username])
 
     function refreshRooms(username) {
         retrieveUserByUsernameApi(username)
-            .then((response) => setRooms(response.data.rooms))
+            .then((response) =>{
+                setRooms(response.data.rooms)
+                setUserId(response.data.id)
+            })
             .catch((error) => console.log("error: " + error))
     }
 
     function updateRoom(id) {
-        navigate(`/rooms/${id}`)
+        navigate(`/rooms/${id}/users/${userId}`)
     }
 
     function selectRoom(id) {
@@ -28,7 +32,7 @@ export default function RoomsComponent() {
     }
 
     function addNewRoom() {
-        navigate(`/rooms/-1`)
+        navigate(`/rooms/-1/users/${userId}`)
     }
 
     function deleteRoom(id) {
@@ -40,8 +44,8 @@ export default function RoomsComponent() {
     }
 
     return (
-        <div className="container">
-            <h1 className="ms-2 fs-2 fw-bold text-dark">Rooms</h1>
+        <div className="container p-5">
+            <h1 className="fs-2 fw-bold text-dark">Rooms</h1>
             {message && <div className="alert alert-warning" >{message}</div>}
             {
             rooms.length > 0 &&

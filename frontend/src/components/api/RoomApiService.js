@@ -8,6 +8,8 @@ export const updateRoom = (room) => apiClient.patch(roomsUrl, room);
 
 export const deleteRoomById = (roomId) => apiClient.delete(`${roomsUrl}/${roomId}`);
 
+export const retrieveRoomById = (roomId) => apiClient.get(`${roomsUrl}/${roomId}`);
+
 export const retrieveTasksByRoomId = (roomId) => apiClient.get(`${roomsUrl}/${roomId}/tasks`);
 
 export const retrieveWorkersByRoomId = (roomId) => apiClient.get(`${roomsUrl}/${roomId}/workers`);

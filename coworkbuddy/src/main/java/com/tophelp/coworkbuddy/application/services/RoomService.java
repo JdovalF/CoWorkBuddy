@@ -77,6 +77,12 @@ public class RoomService implements IRoomService {
     return workerMapper.workersToListWorkerDto(retrieveRoomById(id).getWorkers().stream().toList());
   }
 
+  @Override
+  public RoomDto retrieveRoomDtoById(String id) {
+    log.info("RoomService - retrieveRoomDtoById - Id: {}", id);
+    return roomMapper.roomToRoomDto(retrieveRoomById(id));
+  }
+
   private Room retrieveRoomById(String id) {
     return roomRepository.findById(CrudUtils.uuidFromString(id)).orElseThrow(
         () -> new DatabaseNotFoundException(format("Room Id: %s not found in Database", id)));

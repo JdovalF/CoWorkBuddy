@@ -24,8 +24,8 @@ export default function UsersComponent() {
     }
 
     return (
-        <div className="container">
-            <h1 className="ms-2 fs-2 fw-bold text-dark">Users</h1>
+        <div className="container  p-5">
+            <h1 className="fs-2 fw-bold text-dark">Users</h1>
             {
             users.length > 0 &&
             <div>

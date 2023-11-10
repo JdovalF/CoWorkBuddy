@@ -19,4 +19,5 @@ public interface IRoomService {
 
   List<WorkerDto> retrieveWorkersByRoomId(String id);
 
+  RoomDto retrieveRoomDtoById(String id);
 }
