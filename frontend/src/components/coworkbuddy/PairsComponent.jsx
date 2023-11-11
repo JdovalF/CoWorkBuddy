@@ -75,7 +75,7 @@ export default function PairsComponent() {
                             loading ? ( <p>Loading workers...</p> ) 
                             : (
                                 <div>
-                                    <h2>Workers</h2>
+                                    <h2 className="chip-headers">Workers</h2>
                                     <DropTargetContainerComponent
                                     data={workers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))}
                                     onDrop={handleDrop}
@@ -92,7 +92,7 @@ export default function PairsComponent() {
                                 tasks.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)))
                                 .map((task) => (
                                     <div key={task.id}>
-                                    <h3>{task.name}</h3>
+                                    <h3 className="chip-headers">{task.name}</h3>
                                     <DropTargetContainerComponent
                                         data={{ workers: task.workers, taskId: task.id }}
                                         onDrop={handleDrop}

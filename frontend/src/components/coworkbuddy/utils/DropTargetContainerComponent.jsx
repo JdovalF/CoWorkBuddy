@@ -23,7 +23,7 @@ const DropTargetContainerComponent = ({ data, onDrop, active }) => {
       }
   
     return (
-      <div ref={drop} style={!active ? {...cssStyle, border: '1px dashed #dc3545'} : {...cssStyle, border: '1px dashed #212529'}}>
+      <div ref={drop} style={!active ? {...cssStyle, border: '1px dashed #dc3545'} : {...cssStyle, border: '1px dashed #0d6efd'}}>
         <div style={{ opacity: isOver ? 0.5 : 1 }}>
             {workers.map((worker, index) => (
               <DraggItemComponent key={`${worker.id}-${index}`} worker={worker} />
