@@ -10,13 +10,9 @@ const DraggItemComponent = ({ worker }) => {
       type: 'WORKER',
       item: { type: 'WORKER', id: worker.id, name: worker.name, active: worker.active }
     });
-    // chip
-    // { border: '1px solid #ccc', padding: '8px', margin: '4px', cursor: 'move' }
+
     return (
-      <div ref={drag} 
-      className="chip-worker"
-      // style={{ border: '1px solid #ccc', padding: '8px', margin: '4px', cursor: 'move' }}
-      >
+      <div ref={drag} className="chip-worker">
         {worker.name}
       </div>
     );

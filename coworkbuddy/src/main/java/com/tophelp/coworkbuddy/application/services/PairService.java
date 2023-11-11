@@ -89,7 +89,7 @@ public class PairService implements IPairService {
         .add(PairInputDto.builder().workerIds(List.of(String.valueOf(ew.getId()))).build()));
 
     var activeTaskIds = partitionedTasks.get(true).stream().map(Task::getId).toList();
-    for (int i = 0; i < activeTaskIds.size(); i++) {
+    for (int i = 0; i < pairInputListDto.getPairs().size(); i++) {
       if (nonNull(pairInputListDto.getPairs().get(i))) {
         pairInputListDto.getPairs().get(i).setTaskId(String.valueOf(activeTaskIds.get(i)));
       }
@@ -133,24 +133,23 @@ public class PairService implements IPairService {
 
   @Override
   public PairListDto retrieveCurrentPairsByRoomId(String roomId) {
-    Room room = retrieveRoomById(roomId);
+    var room = retrieveRoomById(roomId);
     var tasks = new HashSet<>(room.getTasks());
     var workersWithTask = new ArrayList<>();
     tasks.forEach(task -> workersWithTask.addAll(task.getWorkers()));
-    var workersWithoutTask = room.getWorkers().stream().filter(worker -> !workersWithTask.contains(worker)).collect(Collectors.toSet());
-    var tasksDto = taskMapper.tasksToSetTaskDto(tasks);
     var nullTaskDto = TaskDto.builder()
                 .active(null)
                 .id(null)
                 .name(null)
                     .workers(new HashSet<>())
                 .build();
-    workersWithoutTask.forEach(worker -> nullTaskDto.getWorkers().add(workerMapper.workerToWorkerDto(worker)));
+    room.getWorkers().stream().filter(worker ->
+        !workersWithTask.contains(worker)).collect(Collectors.toSet())
+        .forEach(worker ->
+            nullTaskDto.getWorkers().add(workerMapper.workerToWorkerDto(worker)));
+    var tasksDto = taskMapper.tasksToSetTaskDto(tasks);
     tasksDto.add(nullTaskDto);
-    return PairListDto.builder().room(CrudUtils.uuidFromString(roomId))
-        .saved(true)
-        .tasks(tasksDto)
-        .build();
+    return PairListDto.builder().room(CrudUtils.uuidFromString(roomId)).saved(true).tasks(tasksDto).build();
   }
 
   @Override
