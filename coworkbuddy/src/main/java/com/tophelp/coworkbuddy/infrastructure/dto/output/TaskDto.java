@@ -15,6 +15,6 @@ import java.util.UUID;
 public class TaskDto {
   private UUID id;
   private String name;
-  private boolean active;
+  private Boolean active;
   private Set<WorkerDto> workers;
 }

@@ -11,4 +11,5 @@ public interface IPairService {
 
   PairListDto createOrUpdatePairs(PairListInputDto pairListInputDto);
 
+  PairListDto retrieveCurrentPairsByRoomId(String roomId);
 }

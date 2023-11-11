@@ -41,4 +41,10 @@ public class PairResource {
     return ResponseEntity.noContent().build();
   }
 
+  @GetMapping("/{roomId}")
+  public ResponseEntity<PairListDto> retrieveCurrentPairsByRoomId(@PathVariable String roomId) {
+    log.info("PairResource - retrieveCurrentPairsByRoomId - Id: {}", roomId);
+    return ResponseEntity.ok(pairService.retrieveCurrentPairsByRoomId(roomId));
+  }
+
 }

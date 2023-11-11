@@ -10,8 +10,10 @@ import com.tophelp.coworkbuddy.domain.Worker;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.PairInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.input.PairListInputDto;
 import com.tophelp.coworkbuddy.infrastructure.dto.output.PairListDto;
+import com.tophelp.coworkbuddy.infrastructure.dto.output.TaskDto;
 import com.tophelp.coworkbuddy.infrastructure.exceptions.DatabaseNotFoundException;
 import com.tophelp.coworkbuddy.infrastructure.mappers.TaskMapper;
+import com.tophelp.coworkbuddy.infrastructure.mappers.WorkerMapper;
 import com.tophelp.coworkbuddy.infrastructure.repository.PairRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.RoomRepository;
 import com.tophelp.coworkbuddy.infrastructure.repository.TaskRepository;
@@ -27,9 +29,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,6 +51,7 @@ public class PairService implements IPairService {
   private final RoomRepository roomRepository;
   private final TaskRepository taskRepository;
   private final WorkerRepository workerRepository;
+  private final WorkerMapper workerMapper;
   private final TaskMapper taskMapper;
 
   @Override
@@ -123,6 +128,28 @@ public class PairService implements IPairService {
     return PairListDto.builder().room(CrudUtils.uuidFromString(pairListInputDto.getRoom()))
         .saved(true)
         .tasks(taskMapper.tasksToSetTaskDto(tasks))
+        .build();
+  }
+
+  @Override
+  public PairListDto retrieveCurrentPairsByRoomId(String roomId) {
+    Room room = retrieveRoomById(roomId);
+    var tasks = new HashSet<>(room.getTasks());
+    var workersWithTask = new ArrayList<>();
+    tasks.forEach(task -> workersWithTask.addAll(task.getWorkers()));
+    var workersWithoutTask = room.getWorkers().stream().filter(worker -> !workersWithTask.contains(worker)).collect(Collectors.toSet());
+    var tasksDto = taskMapper.tasksToSetTaskDto(tasks);
+    var nullTaskDto = TaskDto.builder()
+                .active(null)
+                .id(null)
+                .name(null)
+                    .workers(new HashSet<>())
+                .build();
+    workersWithoutTask.forEach(worker -> nullTaskDto.getWorkers().add(workerMapper.workerToWorkerDto(worker)));
+    tasksDto.add(nullTaskDto);
+    return PairListDto.builder().room(CrudUtils.uuidFromString(roomId))
+        .saved(true)
+        .tasks(tasksDto)
         .build();
   }
 
