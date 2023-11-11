@@ -65,39 +65,44 @@ export default function PairsComponent() {
         setWorkers(uniqueWorkers);
     };
 
-
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="container">
                 <h1>Pairs</h1>
-                <div className="d-flex border border-primary">
-                    <div className="p-2 col-4 borer border-success">
-                        <h2>Workers</h2>
+                <div className="d-flex mt-5">
+                    <div className="p-2 col-4">
                         {
                             loading ? ( <p>Loading workers...</p> ) 
                             : (
-                                <DropTargetContainerComponent
-                                data={workers}
-                                onDrop={handleDrop}
-                                />
+                                <div>
+                                    <h2>Workers</h2>
+                                    <DropTargetContainerComponent
+                                    data={workers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))}
+                                    onDrop={handleDrop}
+                                    />
+                                </div>
                             )
                         }
                     </div>
-                    <div className="p-2 col-8 border border-warning">
-                        <h2>Tasks</h2>
+                    <div className="p-2 col-8">
+                        <div className="container d-flex flex-wrap">
                         { 
                             loading ? ( <p>Loading tasks ...</p>) 
                             : (
-                                tasks.map((task) => (
+                                tasks.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)))
+                                .map((task) => (
                                     <div key={task.id}>
                                     <h3>{task.name}</h3>
                                     <DropTargetContainerComponent
                                         data={{ workers: task.workers, taskId: task.id }}
                                         onDrop={handleDrop}
+                                        active ={task.active}
                                     />
                                     </div>
-                                ))
-                            )}
+                                )
+                            )
+                        }
+                        </div>
                     </div>
                 </div>
             </div>
