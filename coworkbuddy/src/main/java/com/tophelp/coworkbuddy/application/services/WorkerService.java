@@ -58,9 +58,8 @@ public class WorkerService implements IWorkerService {
     if (nonNull(workerInputDto.getRoomId())) {
       oldWorker.setRoom(retrieveRoomById(workerInputDto.getRoomId()));
     }
-    if (nonNull(workerInputDto.getTaskId())) {
-      oldWorker.setTask(retrieveTaskById(workerInputDto.getTaskId()));
-    }
+    oldWorker.setTask(nonNull(workerInputDto.getTaskId())
+        ? retrieveTaskById(workerInputDto.getTaskId()) : null );
     if (nonNull(workerInputDto.getPairs()) && !workerInputDto.getPairs().isEmpty()) {
       oldWorker.setPairs(workerInputDto.getPairs().stream().map(this::retrievePairById).toList());
     }

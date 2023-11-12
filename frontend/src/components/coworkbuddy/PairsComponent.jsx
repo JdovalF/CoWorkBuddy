@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useState } from "react"
-import { recommendPairs, retrievePairsByRoomId } from "../api/PairApiService"
+import { createPairs, recommendPairs, retrievePairsByRoomId } from "../api/PairApiService"
 import { useParams } from "react-router"
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import DropTargetContainerComponent from "./utils/DropTargetContainerComponent"
-import { createWorker } from "../api/WorkerApiService";
+import { createWorker, updateWorker } from "../api/WorkerApiService";
 import { createTask } from "../api/TaskApiService";
 
 export default function PairsComponent() {
-    const [pairs, setPairs] = useState([])
+    
     const { roomId } = useParams()
-
+    const [newWorker, setNewWorker] = useState('')
+    const [newTaskName, setNewTaskName] = useState('')
     const [tasks, setTasks] = useState([])
     const [workers, setWorkers] = useState([])
     const [loading, setLoading] = useState(true)
@@ -65,6 +66,7 @@ export default function PairsComponent() {
     
         setTasks(uniqueUpdatedTasks);
         setWorkers(uniqueWorkers);
+        setSaved(false)
     };
 
     function handleNewWorkerChange(event) {
@@ -97,7 +99,37 @@ export default function PairsComponent() {
         .catch((error) => console.log(error))
     }
 
+
     function handleSave() {
+
+        console.log(workers)
+        console.log(tasks)
+
+        workers.forEach(w => {
+            updateWorker({ id: w.id, name: w.name, roomId: roomId, taskId: null, active: true })
+                .then((response) => {
+                    console.log("worker saved", response.data)
+                })
+                .catch((error) => console.log(error) )
+        })
+
+        const tmpPairs = () => {
+            const array = [];
+            tasks.forEach(t => {
+              array.push({ id: null, pairId: null, taskId: t.id, workerIds: t.workers.map(w => w.id) });
+            });
+          
+            return array;
+          };
+          
+          console.log("new Pairs ", tmpPairs());
+
+        createPairs({ room: roomId, pairs : tmpPairs() })
+            .then((response) => {
+                console.log(response.data)
+                refreshPairs()
+            })
+            .catch((error) => console.log(error))
 
     }
 
@@ -105,8 +137,7 @@ export default function PairsComponent() {
         setNewTaskName(event.target.value)
     }
 
-    const [newWorker, setNewWorker] = useState('')
-    const [newTaskName, setNewTaskName] = useState('')
+
 
     return (
         <DndProvider backend={HTML5Backend}>
@@ -162,10 +193,10 @@ export default function PairsComponent() {
                                     </fieldset>
                                 </div>
                                 <div className="col-sm-3">
-                                    <button type="button" name="recommendTask" onClick={handleRecommend} className="btn btn-outline-success">Recommend Pairs</button>
+                                   {saved &&  <button type="button" name="recommendTask" onClick={handleRecommend} className="btn btn-outline-success">Recommend Pairs</button> }
                                 </div>
                                 <div className="col-sm-1">
-                                    <button type="button" name="saveTask" onClick={handleSave} className="btn btn-outline-success">Save</button>
+                                   {!saved &&  <button type="button" name="saveTask" onClick={handleSave} className="btn btn-outline-success">Save</button> }
                                 </div>
                             </div>
                         </div>

@@ -2,7 +2,7 @@ import { apiClient } from "./ApiClient";
 
 const pairsUrl = '/api/v1/pairs';
 
-export const createPairs = (pairs) => apiClient.post(pairsUrl, pairs);
+export const createPairs = (pairList) => apiClient.post(pairsUrl, pairList);
 
 export const recommendPairs = (roomId) => apiClient.get(`${pairsUrl}/recommend/${roomId}`);
 

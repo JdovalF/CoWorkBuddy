@@ -118,6 +118,7 @@ public class PairService implements IPairService {
         var id = StringUtils.isBlank(pair.getId()) ? UUID.randomUUID() : CrudUtils.uuidFromString(pair.getId());
         var worker = retrieveWorkerById(workerId);
         var task = retrieveTaskById(pair.getTaskId());
+        worker.setActive(task.isActive());
         worker.setTask(task);
         workerRepository.save(worker);
         if (task.isActive() && worker.isActive()) {
