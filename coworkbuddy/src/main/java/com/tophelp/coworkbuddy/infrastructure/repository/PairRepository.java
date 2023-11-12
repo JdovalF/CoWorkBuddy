@@ -22,4 +22,5 @@ public interface PairRepository extends JpaRepository<Pair, UUID> {
       nativeQuery = true)
   Optional<Pair> findMostRecentPairing(@Param("workerIds") List<UUID> workerIds, @Param("size") long size);
 
+  List<Pair> findAllByWorkerId(UUID id);
 }

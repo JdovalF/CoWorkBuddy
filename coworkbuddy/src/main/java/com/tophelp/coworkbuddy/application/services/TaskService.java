@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ public class TaskService implements ITaskService {
     return taskMapper.taskToTaskDto(taskRepository.save(Task.builder().id(UUID.randomUUID())
             .name(taskInputDto.getName()).active(taskInputDto.isActive())
             .room(retrieveRoomById(taskInputDto.getRoomId()))
+            .creationDate(LocalDateTime.now())
         .build()));
   }
 

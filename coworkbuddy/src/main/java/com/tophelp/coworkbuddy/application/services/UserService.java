@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -66,6 +67,7 @@ public class UserService implements IUserService {
     newUser.setRooms(new HashSet<>());
     newUser.setPassword(passwordEncoder.encode(userInputDto.getPassword()));
     newUser.setId(UUID.randomUUID());
+    newUser.setCreationDate(LocalDateTime.now());
     return userMapper.userToUserDTO(userRepository.save(newUser));
   }
 

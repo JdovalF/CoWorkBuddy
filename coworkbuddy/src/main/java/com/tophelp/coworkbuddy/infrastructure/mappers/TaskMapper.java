@@ -24,5 +24,6 @@ public interface TaskMapper {
   @Mapping(target = "id", source = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "name", source = "name", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "active", source = "active", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  @Mapping(target = "creationDate", ignore = true)
   void updateTaskFromTaskInputDto(TaskInputDto taskInputDto, @MappingTarget Task task);
 }

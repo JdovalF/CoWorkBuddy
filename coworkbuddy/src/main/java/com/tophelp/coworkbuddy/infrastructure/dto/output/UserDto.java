@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,4 +19,5 @@ public class UserDto {
   private String email;
   private Set<RoleDto> roles;
   private Set<RoomDto> rooms;
+  private LocalDateTime creationDate;
 }

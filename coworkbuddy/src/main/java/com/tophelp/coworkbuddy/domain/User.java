@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -40,5 +41,7 @@ public class User {
 
   @OneToMany(mappedBy = "user")
   private Set<Room> rooms;
+
+  private LocalDateTime creationDate;
 
 }

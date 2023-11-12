@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +42,8 @@ public class RoomService implements IRoomService {
     CrudUtils.throwExceptionWhenNull(roomInputDto.getId(), "Id", false);
     CrudUtils.throwExceptionWhenNull(roomInputDto.getName(), "Name", true);
     var actualUser = retrieveUserFromRoomInputDto(roomInputDto.getUserId());
-    var actualRoom = Room.builder().id(UUID.randomUUID()).name(roomInputDto.getName()).user(actualUser).build();
+    var actualRoom = Room.builder().id(UUID.randomUUID()).name(roomInputDto.getName()).user(actualUser)
+        .creationDate(LocalDateTime.now()).build();
     return roomMapper.roomToRoomDto(roomRepository.save(actualRoom));
   }
 

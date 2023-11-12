@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,4 +18,5 @@ public class TaskDto {
   private String name;
   private Boolean active;
   private Set<WorkerDto> workers;
+  private LocalDateTime creationDate;
 }

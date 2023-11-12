@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -14,4 +15,5 @@ import java.util.UUID;
 public class RoomDto {
   private UUID id;
   private String name;
+  private LocalDateTime creationDate;
 }

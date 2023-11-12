@@ -15,6 +15,7 @@ public interface UserMapper {
   @Mapping(target = "roles", ignore = true)
   @Mapping(target = "rooms", ignore = true)
   @Mapping(target = "id", ignore = true)
+  @Mapping(target = "creationDate", ignore = true)
   User userInputDtoToUser(UserInputDto userInputDto);
 
   @Mapping(target = "roles", ignore = true)
@@ -23,5 +24,6 @@ public interface UserMapper {
   @Mapping(target = "id", source = "id", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "username", source = "username", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
   @Mapping(target = "email", source = "email", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  @Mapping(target = "creationDate", ignore = true)
   void updateUserFromUserInputDto(UserInputDto userInputDto, @MappingTarget User user);
 }

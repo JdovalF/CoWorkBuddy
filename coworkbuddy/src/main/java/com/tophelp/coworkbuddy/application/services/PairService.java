@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -67,7 +66,7 @@ public class PairService implements IPairService {
     var oddWorker = getOddWorker(activeWorkers);
     for (int i = activeWorkers.size() - 1; i >= 0; i--) {
       if(removedWorkers.contains(activeWorkers.get(i))) {
-       break;
+        break;
       }
       var possiblePairs = pairGenerator.generatePossiblePairsForWorker(activeWorkers, removedWorkers);
       var weightings = new HashMap<Integer, Long>();
@@ -83,6 +82,10 @@ public class PairService implements IPairService {
           .workerIds(List.of(String.valueOf(activeWorkers.get(i).getId()), String.valueOf(workerToPairWith.getId())))
           .build();
       pairInputListDto.getPairs().add(pairInputDto);
+    }
+
+    if (managePairsCleanUp(activeWorkers, pairInputListDto)) {
+      return recommendPairs(roomId);
     }
 
     oddWorker.ifPresent(ew -> pairInputListDto.getPairs()
@@ -101,7 +104,6 @@ public class PairService implements IPairService {
       var inactiveWorkerIds = partitionedWorkers.get(false).stream().map(Worker::getId).map(UUID::toString).toList();
       pairInputListDto.getPairs().add(PairInputDto.builder().taskId(inactiveTaskId).workerIds(inactiveWorkerIds).build());
     }
-
     return createOrUpdatePairs(pairInputListDto);
   }
 
@@ -212,6 +214,19 @@ public class PairService implements IPairService {
     if(!partitionedWorkers.get(false).isEmpty() && partitionedTasks.get(false).isEmpty()) {
       throw new CoworkBuddyTechnicalException("Not enough inactive Tasks for the current inactive Workers.");
     }
+  }
+
+  private boolean managePairsCleanUp(List<Worker> activeWorkers, PairListInputDto pairInputListDto) {
+    if(activeWorkers.size() / 2 != pairInputListDto.getPairs().size()) {
+      log.info("Loop Complete Resetting pairs");
+      activeWorkers.forEach(worker -> {
+        pairRepository.deleteAll(pairRepository.findAllByWorkerId(worker.getId()));
+        worker.setTask(null);
+        workerRepository.save(worker);
+      });
+      return true;
+    }
+    return false;
   }
 
   private Room retrieveRoomById(String id) {

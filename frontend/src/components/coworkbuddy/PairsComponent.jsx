@@ -112,14 +112,15 @@ export default function PairsComponent() {
         <DndProvider backend={HTML5Backend}>
             <div className="container">
                 <h1 className="fs-2 fw-bold text-dark">Pairs</h1>
-                <div className="d-flex my-5 p-1 border border-success">
-                    <div className="p-2 my-4 col-4 border border-primary">
+                <div className="d-flex my-5 p-1">
+                    <div className="p-2  col-4">
                         {
                             loading ? ( <p>Loading...</p> ) 
                             : (
                                 <div>
+                                    <h3>Buddies</h3>
                                     <DropTargetContainerComponent
-                                    data={workers.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1))}
+                                    data={workers.sort((a, b) => (a.active === b.active ? new Date(a.creationDate) - new Date(b.creationDate) : a.active ? -1 : 1))}
                                     onDrop={handleDrop}
                                     />
                                     <fieldset className="d-flex align-items-baseline mt-1 px-3">
@@ -131,12 +132,12 @@ export default function PairsComponent() {
                             )
                         }
                     </div>
-                    <div className="col-8 p-2  border border-primary">
+                    <div className="col-8 p-2">
                         <div className="container d-flex flex-wrap">
                         { 
                             loading ? ( <p>Loading tasks ...</p>) 
                             : ( 
-                                tasks.sort((a, b) => (a.active === b.active ? 0 : a.active ? -1 : 1)))
+                                tasks.sort((a, b) => (a.active === b.active ? new Date(a.creationDate) - new Date(b.creationDate) : a.active ? -1 : 1))
                                 .map((task) => (
                                     <div key={task.id}>
                                     <h3 className="chip-headers">{task.name}</h3>
@@ -148,7 +149,7 @@ export default function PairsComponent() {
                                     </div>
 
                                   
-                                )
+                                ))
                             )
                         }
                         </div>

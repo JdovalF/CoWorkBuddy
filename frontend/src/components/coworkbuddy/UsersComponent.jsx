@@ -40,7 +40,8 @@ export default function UsersComponent() {
                     </thead>
                     <tbody>
                         {
-                            users.map(user => (
+                            users.sort((a, b) => new Date(a.creationDate) - new Date(b.creationDate))
+                            .map(user => (
                                 <tr key={user.id}>
                                     <td>{user.username}</td>
                                     <td>{user.email}</td>

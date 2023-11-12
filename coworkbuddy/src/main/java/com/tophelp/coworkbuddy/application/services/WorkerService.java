@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static java.lang.String.format;
@@ -44,6 +45,7 @@ public class WorkerService implements IWorkerService {
         .name(workerInputDto.getName()).active(workerInputDto.isActive())
         .room(retrieveRoomById(workerInputDto.getRoomId()))
         .task(nonNull(workerInputDto.getTaskId()) ? retrieveTaskById(workerInputDto.getTaskId()) : null)
+        .creationDate(LocalDateTime.now())
         .build()));
   }
 

@@ -61,7 +61,8 @@ export default function RoomsComponent() {
                     </thead>
                     <tbody>
                         {
-                            rooms.map(room => (
+                            rooms.sort((a, b) => new Date(a.creationDate) - new Date(b.creationDate))
+                            .map(room => (
                                 <tr key={room.id}>
                                     <td>{room.name}</td>
                                     <td>

@@ -23,9 +23,7 @@ export default function AuthProvider({ children }) {
             }
         )
 
-        return () => {
-            apiClient.interceptors.request.eject(interceptor)
-        }
+        return () => { apiClient.interceptors.request.eject(interceptor) }
     }, [token]);
 
     async function login(username, password) {
@@ -37,7 +35,6 @@ export default function AuthProvider({ children }) {
 
                 if(decodedPayload.scope.includes("ADMIN")) {
                     setAdmin(true);
-                    console.log("is Admin: true")
                 }
 
                 const jwtToken = 'Bearer ' + b64Token
